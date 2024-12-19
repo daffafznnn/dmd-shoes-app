@@ -62,7 +62,6 @@ return new class extends Migration
         Schema::create('shipping_methods', function (Blueprint $table) {
             $table->id();
             $table->string('name');  // Nama metode pengiriman (misalnya: JNE, Tiki, jne)
-            $table->decimal('cost', 10, 2)->default(0);  // Biaya pengiriman standar untuk metode ini
             $table->boolean('is_active')->default(true);  // Status aktif atau tidaknya metode pengiriman
             $table->timestamps();
         });

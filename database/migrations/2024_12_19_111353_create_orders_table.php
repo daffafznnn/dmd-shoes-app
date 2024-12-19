@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade');         // Metode pembayaran (misalnya transfer bank, COD)
             $table->string('payment_proof')->nullable();  // Bukti transaksi (URL atau path gambar)
             $table->foreignId('shipping_method_id')->constrained('shipping_methods')->onDelete('cascade');   // Nama ekspedisi (misalnya JNE, TIKI)
+            $table->decimal('cost', 10, 2)->default(0);  // Biaya pengiriman standar untuk metode ini
             $table->string('tracking_number')->nullable();     // Nomor resi pengiriman
             $table->decimal('total', 10, 2);          // Total harga pesanan
             $table->softDeletes();                    // Untuk fitur penghapusan lunak
