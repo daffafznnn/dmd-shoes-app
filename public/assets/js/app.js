@@ -1,61 +1,3 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-
-<body class="font-sans antialiased">
-    <div x-data="setup()" x-init="$refs.loading.classList.add('hidden');
-    setColors(color);" :class="{ 'dark': isDark }">
-        <div class="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
-            <x-loading-screen ref="loading" />
-            <!-- Sidebar -->
-            <x-sidebar />
-
-            <div class="flex-1 h-full overflow-x-hidden overflow-y-auto">
-                <!-- Page Heading -->
-                <x-header />
-
-                <!-- Page Content -->
-                <main>
-                    {{ $slot }}
-                </main>
-                <!-- Main footer -->
-                <footer
-                    class="flex items-center justify-between p-4 bg-white border-t dark:bg-darker dark:border-primary-darker"
-                >
-                    <div>dmd-shoes &copy; 2024</div>
-                    <div>
-                    Made by
-                    <a href="#" target="_blank" class="text-blue-500 hover:underline"
-                        >Portal Preneur</a
-                    >
-                    </div>
-                </footer>
-            </div>
-            <!-- Panels -->
-            <x-settings-panel />
-            <x-notification-panel />
-            <x-search-panel />
-        </div>
-    </div>
-
-    <script src="{{ asset('js/script.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>
-    <script>
         const setup = () => {
             const getTheme = () => {
                 if (window.localStorage.getItem('dark')) {
@@ -186,7 +128,3 @@
                 updateLineChart,
             }
         }
-    </script>
-</body>
-
-</html>

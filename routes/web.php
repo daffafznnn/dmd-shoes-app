@@ -1,27 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\App;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-
-Route::group(
-    [
-        'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath']
-    ],
-    function () {
-
-        /** ADD ALL LOCALIZED ROUTES INSIDE THIS GROUP **/
-        Route::get('/test', function () {
-            return App::getLocale();
-        });
-
-        // Route::get('/', [HomeController::class, 'index'])->name('home');
-        // Route::resource('/products', ProductUserController::class)->except('edit');
-        // Route::get('/products_detail/{slug}', [ProductUserController::class, 'detail'])->name('products.detail');
-    }
-);
 
 Route::get('/', function () {
     return view('welcome');

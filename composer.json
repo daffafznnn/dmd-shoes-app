@@ -7,9 +7,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "blade-ui-kit/blade-ui-kit": "^0.6.4",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
-        "mcamara/laravel-localization": "^2.2"
+        "mcamara/laravel-localization": "^2.2",
+        "realrashid/sweet-alert": "^7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
