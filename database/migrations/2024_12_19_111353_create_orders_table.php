@@ -20,9 +20,9 @@ return new class extends Migration
             $table->text('shipping_address');         // Alamat pengiriman
             $table->text('note')->nullable();         // Catatan tambahan untuk pesanan
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');  // Status pesanan
-            $table->string('payment_method');         // Metode pembayaran (misalnya transfer bank, COD)
+            $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade');         // Metode pembayaran (misalnya transfer bank, COD)
             $table->string('payment_proof')->nullable();  // Bukti transaksi (URL atau path gambar)
-            $table->string('shipping_provider')->nullable();   // Nama ekspedisi (misalnya JNE, TIKI)
+            $table->foreignId('shipping_method_id')->constrained('shipping_methods')->onDelete('cascade');   // Nama ekspedisi (misalnya JNE, TIKI)
             $table->string('tracking_number')->nullable();     // Nomor resi pengiriman
             $table->decimal('total', 10, 2);          // Total harga pesanan
             $table->softDeletes();                    // Untuk fitur penghapusan lunak

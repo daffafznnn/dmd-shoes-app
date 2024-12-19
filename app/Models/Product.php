@@ -8,6 +8,23 @@ class Product extends Model
 {
     protected $table = 'products';
 
+    protected $fillable = [
+        'category_id',
+        'model_number',
+        'name',
+        'slug',
+        'description',
+        'cover',
+        'type',
+        'status',
+        'default_price',
+        'default_stock',
+        'is_featured',
+        'meta_title',
+        'meta_keywords',
+        'meta_description',
+        'unit_id'
+    ];
 
     public function categories()
     {
@@ -22,5 +39,15 @@ class Product extends Model
     public function product_images()
     {
         return $this->hasMany(ProductImage::class, 'id', 'product_id');
+    }
+
+    public function order_details()
+    {
+        return $this->hasMany(OrderDetail::class, 'id', 'product_id');
+    }
+
+    public function units()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id', 'id');
     }
 }

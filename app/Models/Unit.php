@@ -4,18 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Unit extends Model
 {
-    protected $table = 'categories';
+    protected $table = 'units';
 
     protected $fillable = [
+        'acronym',
         'name',
-        'slug',
         'status',
     ];
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'id', 'category_id');
+        return $this->hasMany(Product::class, 'id', 'unit_id');
     }
 }

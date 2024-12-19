@@ -8,6 +8,14 @@ class ProductVariant extends Model
 {
     protected $table = 'product_variants';
 
+    protected $fillable = [
+        'product_id', 
+        'color_id', 
+        'size_id', 
+        'material_id',
+        'price',
+    ];
+
     public function products()
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
