@@ -1,0 +1,1 @@
+<x-table :columns="$columns" :data="$data" emptyMessage="Tidak ada data ditemukan." />
