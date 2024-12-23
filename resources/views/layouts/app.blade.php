@@ -14,7 +14,9 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])   
+    @stack('styles')
+    @livewireStyles
 </head>
 
 <body class="font-sans antialiased">
@@ -52,7 +54,7 @@
             <x-search-panel />
         </div>
     </div>
-
+    @stack('scripts')
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>
     <script>
@@ -187,6 +189,7 @@
             }
         }
     </script>
+    @livewireScripts
 </body>
 
 </html>

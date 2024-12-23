@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+
 use Illuminate\Support\Facades\Route;
 
 
@@ -14,15 +16,14 @@ Route::middleware('auth')->group(function () {
     // admin and superadmin routes group
     Route::middleware('checkRole:admin,superadmin')->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-        Route::get('/template/table', function () {
-            return view('admin.component-template.table', [
-                'columns' => ['ID', 'Nama Produk', 'Harga', 'Stok'],
-                'data' => [
-                    ['ID' => 1, 'Nama Produk' => 'Sepatu A', 'Harga' => '150.000', 'Stok' => 20],
-                    ['ID' => 2, 'Nama Produk' => 'Sepatu B', 'Harga' => '200.000', 'Stok' => 15],
-                ],
-            ]);
-        })->name('template.table');
+        Route::controller(UserController::class)->name('admin.')->group(function () {
+            Route::get('/admin/users', 'index')->name('users.index');
+            Route::get('/admin/users/create', 'create')->name('users.create');
+            Route::post('/admin/users', 'store')->name('users.store');
+            Route::get('/admin/users/{user}/edit', 'edit')->name('users.edit');
+            Route::put('/admin/users/{user}', 'update')->name('users.update');
+            Route::delete('/admin/users/{user}', 'destroy')->name('users.destroy');
+        });
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
