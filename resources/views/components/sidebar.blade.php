@@ -12,7 +12,7 @@
                     <span aria-hidden="true">
                         <i class="bi bi-house-door w-5 h-5"></i> <!-- Bootstrap Icon for Dashboard -->
                     </span>
-                    <span class="ml-2 text-sm"> Dashboard </span>
+                    <span class="ml-2 text-sm"> {{ __('Dashboard') }} </span>
                 </a>
             </div>
 
@@ -25,7 +25,7 @@
                     <span aria-hidden="true">
                         <i class="bi bi-box w-5 h-5"></i> <!-- Bootstrap Icon for Products -->
                     </span>
-                    <span class="ml-2 text-sm"> Produk </span>
+                    <span class="ml-2 text-sm"> {{ __('Manajemen Produk') }} </span>
                     <span class="ml-auto" aria-hidden="true">
                         <svg class="w-4 h-4 transition-transform transform" :class="{ 'rotate-180': open }"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -35,9 +35,13 @@
                 </a>
                 <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
                     <a href="#" 
-                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">Daftar Produk</a>
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Daftar Produk') }}</a>
                     <a href="#" 
-                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">Tambah Produk</a>
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Daftar Kategori') }}</a>
+                    <a href="#" 
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Daftar Unit') }}</a>
+                    <a href="#" 
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Tambah Produk') }}</a>
                 </div>
             </div>
 
@@ -50,7 +54,7 @@
                     <span aria-hidden="true">
                         <i class="bi bi-cart w-5 h-5"></i> <!-- Bootstrap Icon for Orders -->
                     </span>
-                    <span class="ml-2 text-sm"> Pesanan </span>
+                    <span class="ml-2 text-sm"> {{ __('Manajemen Pesanan') }} </span>
                     <span class="ml-auto" aria-hidden="true">
                         <svg class="w-4 h-4 transition-transform transform" :class="{ 'rotate-180': open }"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -60,9 +64,9 @@
                 </a>
                 <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
                     <a href="#" 
-                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">Daftar Pesanan</a>
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Daftar Pesanan') }}</a>
                     <a href="#" 
-                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">Tambah Pesanan</a>
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Tambah Pesanan') }}</a>
                 </div>
             </div>
 
@@ -75,7 +79,7 @@
                     <span aria-hidden="true">
                         <i class="bi bi-person w-5 h-5"></i> <!-- Bootstrap Icon for Users -->
                     </span>
-                    <span class="ml-2 text-sm"> Pengguna </span>
+                    <span class="ml-2 text-sm"> {{ __('Manajemen Pengguna') }} </span>
                     <span class="ml-auto" aria-hidden="true">
                         <svg class="w-4 h-4 transition-transform transform" :class="{ 'rotate-180': open }"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -86,10 +90,10 @@
                 <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
                     <a href="{{ route('admin.users.index') }}" 
                         class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700
-                        {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'text-primary-200' : '' }}">Daftar Pengguna</a>
+                        {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'text-primary-200' : '' }}">{{ __('Daftar Pengguna') }}</a>
                     <a href="#" 
                         class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700
-                        {{ Request::is('admin/users/create') ? 'text-primary-200' : '' }}">Tambah Pengguna</a>
+                        {{ Request::is('admin/users/create') ? 'text-primary-200' : '' }}">{{ __('Tambah Pengguna') }}</a>
                 </div>
             </div>
 
@@ -102,7 +106,7 @@
                     <span aria-hidden="true">
                         <i class="bi bi-gear w-5 h-5"></i> <!-- Bootstrap Icon for Settings -->
                     </span>
-                    <span class="ml-2 text-sm"> Pengaturan </span>
+                    <span class="ml-2 text-sm"> {{ __('Pengaturan Aplikasi') }} </span>
                     <span class="ml-auto" aria-hidden="true">
                         <svg class="w-4 h-4 transition-transform transform" :class="{ 'rotate-180': open }"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -112,9 +116,9 @@
                 </a>
                 <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
                     <a href="#" 
-                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">Pengaturan Umum</a>
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Pengaturan Umum') }}</a>
                     <a href="#" 
-                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">Metode Pembayaran</a>
+                        class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Metode Pembayaran') }}</a>
                 </div>
             </div>
 
@@ -127,7 +131,7 @@
                 <span aria-hidden="true">
                     <i class="bi bi-sliders w-4 h-4 mr-2"></i> <!-- Bootstrap Icon for Customize -->
                 </span>
-                <span>Customize</span>
+                <span>{{ __('kustomisasi') }}</span>
             </button>
         </div>
     </div>

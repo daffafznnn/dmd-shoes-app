@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -49,5 +50,15 @@ class Product extends Model
     public function units()
     {
         return $this->belongsTo(Unit::class, 'unit_id', 'id');
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    public function scopeFilter(Builder $query)
+    {
+        $query->where('name', 'like', '%'.request('search').'%');
     }
 }
