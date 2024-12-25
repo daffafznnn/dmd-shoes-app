@@ -87,7 +87,7 @@
                     <a href="{{ route('admin.users.index') }}" 
                         class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700
                         {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'text-primary-200' : '' }}">Daftar Pengguna</a>
-                    <a href="#" 
+                    <a href="{{ route('admin.users.create') }}" 
                         class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700
                         {{ Request::is('admin/users/create') ? 'text-primary-200' : '' }}">Tambah Pengguna</a>
                 </div>

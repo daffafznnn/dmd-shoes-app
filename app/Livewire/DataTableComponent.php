@@ -9,8 +9,8 @@ class DataTableComponent extends Component
 {
     use WithPagination;
 
-    public $search = ''; // untuk pencarian
-    public $perPage = 10; // jumlah data per halaman
+    public $search = ''; // Untuk pencarian
+    public $perPage = 10; // Jumlah data per halaman
     public $model; // Model yang digunakan (misalnya User atau Product)
     public $columns = []; // Kolom yang ditampilkan
     public $actions = []; // Aksi seperti Edit, Delete, dll.
@@ -53,5 +53,15 @@ class DataTableComponent extends Component
     public function updatingSearch()
     {
         $this->resetPage(); // Reset pagination saat pencarian berubah
+    }
+
+    // Untuk menghapus data
+    public function delete($id)
+    {
+        $model = $this->model::find($id);
+        if ($model) {
+            $model->delete();
+            session()->flash('message', 'Data berhasil dihapus!');
+        }
     }
 }
