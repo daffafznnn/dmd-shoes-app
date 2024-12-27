@@ -12,7 +12,7 @@ class ServeWithDev extends Command
      *
      * @var string
      */
-    protected $signature = 'serve:with-dev';
+    protected $signature = 'serve:dev';
 
     /**
      * The console command description.

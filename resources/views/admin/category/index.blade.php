@@ -7,7 +7,7 @@
 
         <!-- Title Section -->
         <div class="mb-6">
-            <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">{{ __('Daftar Produk') }}</h1>
+            <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">{{ __('Daftar Kategori') }}</h1>
         </div>
 
         <!-- Form Filter Section -->

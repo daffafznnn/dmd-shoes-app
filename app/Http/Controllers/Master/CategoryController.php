@@ -20,9 +20,12 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = $this->categoryService->getAll();
+        $categories = $this->categoryService->search(
+            $request->only(['search', 'category', 'status']),
+            $request->get('perPage', 10)
+        );
         return view('admin.category.index', compact('categories'));
     }
 
@@ -45,7 +48,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $this->categoryService->create($request->all());
-        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+        return redirect()->route('master.categories.index')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -70,7 +73,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $this->categoryService->update($id, $request->all());
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+        return redirect()->route('master.categories.index')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -82,6 +85,6 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $this->categoryService->delete($id);
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+        return redirect()->route('master.categories.index')->with('success', 'Category deleted successfully.');
     }
 }

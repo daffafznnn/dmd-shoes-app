@@ -4,40 +4,53 @@ namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
 use App\Services\ProductService;
+use App\Services\CategoryService;
+use App\Services\UnitService;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     protected $productService;
+    protected $categoryService;
+    protected $unitService;
 
-    public function __construct(ProductService $productService)
+    public function __construct(ProductService $productService, CategoryService $categoryService, UnitService $unitService)
     {
         $this->productService = $productService;
+        $this->categoryService = $categoryService;
+        $this->unitService = $unitService;
     }
 
     /**
-     * Display a listing of products.
+     * Display a listing of products with filters and pagination.
      *
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->productService->getAll();
-        return view('admin.products.index', compact('products'));
+        $products = $this->productService->search(
+            $request->only(['search', 'category', 'status']),
+            $request->get('perPage', 10)
+        );
+
+        $categories = $this->categoryService->getAll();
+
+        return view('admin.products.index', compact('products', 'categories'));
     }
 
     /**
      * Show a single product by ID.
      *
      * @param int $id
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function show($id)
     {
         $product = $this->productService->getById($id);
 
         if (!$product) {
-            return redirect()->route('master.products.index')->with('error', 'Product not found');
+            return redirect()->route('master.products.index')->with('error', 'Produk tidak ditemukan.');
         }
 
         return view('admin.products.show', compact('product'));
@@ -50,9 +63,8 @@ class ProductController extends Controller
      */
     public function create()
     {
-        // Fetch categories and units through services
-        $categories = app(\App\Services\CategoryService::class)->getAll();
-        $units = app(\App\Services\UnitService::class)->getAll();
+        $categories = $this->categoryService->getAll();
+        $units = $this->unitService->getAll();
 
         return view('admin.products.create', compact('categories', 'units'));
     }
@@ -65,29 +77,36 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Call service to handle validation and storage logic
-        $this->productService->create($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'unit_id' => 'required|exists:units,id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'status' => 'required|boolean',
+        ]);
 
-        return redirect()->route('master.products.index')->with('success', 'Product created successfully');
+        $this->productService->create($validated);
+
+        return redirect()->route('master.products.index')->with('success', 'Produk berhasil dibuat.');
     }
 
     /**
      * Show the form for editing an existing product.
      *
      * @param int $id
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit($id)
     {
         $product = $this->productService->getById($id);
 
         if (!$product) {
-            return redirect()->route('master.products.index')->with('error', 'Product not found');
+            return redirect()->route('master.products.index')->with('error', 'Produk tidak ditemukan.');
         }
 
-        // Fetch categories and units through services
-        $categories = app(\App\Services\CategoryService::class)->getAll();
-        $units = app(\App\Services\UnitService::class)->getAll();
+        $categories = $this->categoryService->getAll();
+        $units = $this->unitService->getAll();
 
         return view('admin.products.edit', compact('product', 'categories', 'units'));
     }
@@ -101,10 +120,18 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Call service to handle validation and update logic
-        $this->productService->update($id, $request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'unit_id' => 'required|exists:units,id',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'status' => 'required|boolean',
+        ]);
 
-        return redirect()->route('master.products.index')->with('success', 'Product updated successfully');
+        $this->productService->update($id, $validated);
+
+        return redirect()->route('master.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
     /**
@@ -115,9 +142,8 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        // Call service to handle deletion logic
         $this->productService->delete($id);
 
-        return redirect()->route('master.products.index')->with('success', 'Product deleted successfully');
+        return redirect()->route('master.products.index')->with('success', 'Produk berhasil dihapus.');
     }
 }

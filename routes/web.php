@@ -20,7 +20,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('checkRole:admin,superadmin')->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         // Product routes
-        Route::controller(ProductController::class)->name('master.products.')->prefix('admin/products')->group(function () {
+        Route::controller(ProductController::class)->name('master.products.')->prefix('admin/master/products')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');

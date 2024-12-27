@@ -48,4 +48,9 @@ abstract class BaseRepository
 
     return $record->delete();
   }
+
+  public function getModel()
+  {
+    return $this->model;
+  }
 }
