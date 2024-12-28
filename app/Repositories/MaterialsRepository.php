@@ -2,22 +2,21 @@
 
 namespace App\Repositories;
 
-use App\Models\Category;
+use App\Models\ProductMaterial;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class CategoryRepository extends BaseRepository
+class MaterialsRepository extends BaseRepository
 {
-
   protected $rules = [
     'name' => 'required|string|max:255',
-    'slug' => 'required|string|max:255|unique:categories,slug',
+    'slug' => 'required|string|max:255|unique:product_materials,slug',
     'status' => 'required|boolean|in:0,1',
   ];
 
-  public function __construct(Category $category)
+  public function __construct(ProductMaterial $productMaterial)
   {
-    parent::__construct($category);
+    parent::__construct($productMaterial);
   }
 
   public function create(array $data)
@@ -42,6 +41,4 @@ class CategoryRepository extends BaseRepository
       throw new ValidationException($validator);
     }
   }
-
 }
-

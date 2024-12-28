@@ -48,8 +48,15 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $this->categoryService->create($request->all());
-        return redirect()->route('master.categories.index')->with('success', 'Kategori berhasil dibuat.');
+        $result = $this->categoryService->create($request->all());
+
+        if ($result === false) {
+            // Jika gagal, ambil pesan dari service dan arahkan kembali dengan pesan error
+            return redirect()->route('master.categories.index')->with('error', $this->categoryService->getMessage());
+        }
+
+        // Jika berhasil, ambil pesan dari service dan arahkan kembali dengan pesan sukses
+        return redirect()->route('master.categories.index')->with('success', $this->categoryService->getMessage());
     }
 
     /**
@@ -89,4 +96,3 @@ class CategoryController extends Controller
         return redirect()->route('master.categories.index')->with('success', 'Kategori berhasil dihapus.');
     }
 }
-

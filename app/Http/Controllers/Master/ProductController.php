@@ -7,7 +7,6 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use App\Services\UnitService;
 use Illuminate\Http\Request;
-
 class ProductController extends Controller
 {
     protected $productService;
@@ -34,7 +33,7 @@ class ProductController extends Controller
             $request->get('perPage', 10)
         );
 
-        $categories = $this->categoryService->getAll();
+        $categories = $this->categoryService->search(['status' => 1], 100);
 
         return view('admin.products.index', compact('products', 'categories'));
     }
