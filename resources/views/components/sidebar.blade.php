@@ -19,8 +19,8 @@
 
                 <!-- Product & Variation Management -->
                 <div x-data="{
-                    isActive: {{ Request::is('admin/master/products*') || Request::is('admin/master/units*') || Request::is('admin/master/categories*') ? 'true' : 'false' }},
-                    open: {{ Request::is('admin/master/products*') || Request::is('admin/master/units*') || Request::is('admin/master/categories*') ? 'true' : 'false' }}
+                    isActive: {{ Request::is('admin/master/products*') || Request::is('admin/master/units*') || Request::is('admin/master/categories*') || Request::is('admin/master/materials*') || Request::is('admin/master/sizes*') || Request::is('admin/master/colors*') ? 'true' : 'false' }},
+                    open: {{ Request::is('admin/master/products*') || Request::is('admin/master/units*') || Request::is('admin/master/categories*') || Request::is('admin/master/materials*') || Request::is('admin/master/sizes*') || Request::is('admin/master/colors*') ?  'true' : 'false' }}
                 }">
                     <a href="#" @click="$event.preventDefault(); open = !open"
                         class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
@@ -40,7 +40,7 @@
                     <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
                         <!-- Dropdown for Multiple Categories (Category, Unit, etc.) -->
                         <div x-data="{
-                            masterMenuOpen: {{ Request::is('admin/master/categories*') || Request::is('admin/master/units*') ? 'true' : 'false' }}
+                            masterMenuOpen: {{ Request::is('admin/master/categories*') || Request::is('admin/master/units*') || Request::is('admin/master/materials*') || Request::is('admin/master/sizes*') || Request::is('admin/master/colors*') ? 'true' : 'false' }}
                         }">
                             <a href="#" @click="$event.preventDefault(); masterMenuOpen = !masterMenuOpen"
                                 class="flex items-center p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
@@ -66,16 +66,19 @@
                                     :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/units*') ? 'true' : 'false' }} }">
                                     {{ __('Unit') }}
                                 </a>
-                                <a href="#"
-                                    class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">
+                                <a href="{{ route('master.materials.index') }}"
+                                    class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                                    :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/materials*') ? 'true' : 'false' }} }">
                                     {{ __('Material') }}
                                 </a>
-                                <a href="#"
-                                    class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">
+                                <a href="{{ route('master.sizes.index') }}"
+                                    class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                                    :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/sizes*') ? 'true' : 'false' }} }">
                                     {{ __('Ukuran') }}
                                 </a>
-                                <a href="#"
-                                    class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">
+                                <a href="{{ route('master.colors.index') }}"
+                                    class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                                    :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/colors*') ? 'true' : 'false' }} }">
                                     {{ __('Warna') }}
                                 </a>
                             </div>
@@ -196,3 +199,4 @@
         </div>
     </aside>
 @endauth
+

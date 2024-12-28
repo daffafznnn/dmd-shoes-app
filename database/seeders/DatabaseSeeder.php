@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             UnitSeeder::class,
             CategorySeeder::class,
+            MaterialSeeder::class,
+            SizeSeeder::class,
+            ColorSeeder::class,
         ]);
     }
 }

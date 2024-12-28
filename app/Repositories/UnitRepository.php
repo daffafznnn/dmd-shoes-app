@@ -12,6 +12,7 @@ class UnitRepository extends BaseRepository
     'acronym' => 'required|string|max:10|unique:units,acronym',
     'name' => 'required|string|max:255',
     'status' => 'required|boolean',
+    'is_base' => 'required|boolean',
   ];
 
   public function __construct(Unit $unit)
@@ -58,3 +59,4 @@ class UnitRepository extends BaseRepository
     }
   }
 }
+

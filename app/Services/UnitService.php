@@ -6,26 +6,24 @@ use App\Repositories\UnitRepository;
 
 class UnitService extends BaseService
 {
-  public function __construct(UnitRepository $unitRepository)
-  {
-    parent::__construct($unitRepository);
-  }
+    public function __construct(UnitRepository $unitRepository)
+    {
+        parent::__construct($unitRepository);
+    }
 
-  /**
-   * Override create to include additional logic if necessary.
-   */
-  public function create(array $data)
-  {
-    // Additional logic before creation (if needed)
-    return parent::create($data);
-  }
-
-  /**
-   * Override update to include additional logic if necessary.
-   */
-  public function update($id, array $data)
-  {
-    // Additional logic before update (if needed)
-    return parent::update($id, $data);
-  }
+    public function search(array $filters = [], $perPage = 10)
+    {
+        return $this->repository->getModel()
+            ->when(isset($filters['search']), function ($query) use ($filters) {
+                $query->where(function ($query) use ($filters) {
+                    $query->where('name', 'like', '%' . $filters['search'] . '%')
+                          ->orWhere('acronym', 'like', '%' . $filters['search'] . '%');
+                });
+            })
+            ->when(isset($filters['status']), function ($query) use ($filters) {
+                $query->where('status', $filters['status']);
+            })
+            ->paginate($perPage);
+    }
 }
+

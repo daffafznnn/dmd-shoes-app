@@ -7,7 +7,7 @@
 
         <!-- Title Section -->
         <div class="mb-6">
-            <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">{{ __('Daftar Satuan') }}</h1>
+            <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">{{ __('Daftar Warna Produk') }}</h1>
         </div>
 
         <!-- Session Alert -->
@@ -16,15 +16,15 @@
         <div class="mb-6">
             <div class="card bg-white shadow-lg border dark:border-primary-darker dark:bg-darker">
                 <div class="card-body">
-                    <h2 class="card-title mb-4 text-gray-800 dark:text-white">{{ __('Filter Satuan') }}</h2>
-                    <form action="{{ route('master.units.index') }}" method="GET" class="space-y-4">
+                    <h2 class="card-title mb-4 text-gray-800 dark:text-white">{{ __('Filter Warna') }}</h2>
+                    <form action="{{ route('master.colors.index') }}" method="GET" class="space-y-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div class="col-span-2 lg:col-span-3">
                                 <label for="search"
                                     class="block text-sm font-medium text-gray-800 dark:text-gray-300">{{ __('Cari') }}</label>
                                 <input type="text" name="search" id="search"
                                     class="input input-bordered w-full bg-white dark:bg-darker"
-                                    placeholder="{{ __('Cari berdasarkan nama satuan') }}"
+                                    placeholder="{{ __('Cari berdasarkan nama warna') }}"
                                     value="{{ request()->query('search') }}">
                             </div>
 
@@ -44,7 +44,7 @@
 
                         <div class="flex justify-end mt-4">
                             <button type="submit" class="btn btn-primary">{{ __('Filter') }}</button>
-                            <a href="{{ route('master.units.index') }}"
+                            <a href="{{ route('master.colors.index') }}"
                                 class="btn btn-secondary ml-2">{{ __('Reset') }}</a>
                         </div>
                     </form>
@@ -54,7 +54,7 @@
 
         <div class="flex justify-end mb-4">
             <button class="btn btn-primary"
-                onclick="document.getElementById('createUnitModal').showModal()">{{ __('Tambah Satuan') }}</button>
+                onclick="createColorModal.showModal()">{{ __('Tambah Warna') }}</button>
         </div>
 
         <div class="overflow-hidden w-full rounded-lg shadow-lg bg-white border border-gray-300 dark:border-primary-darker dark:bg-darker">
@@ -69,34 +69,33 @@
                             <tr class="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300">
                                 <th>
                                    #
-                                <th>{{ __('Nama Satuan') }}</th>
-                                <th>{{ __('Singkatan') }}</th>
+                                </th>
+                                <th>{{ __('Nama') }}</th>
                                 <th>{{ __('Status') }}</th>
                                 <th>{{ __('Aksi') }}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($units as $unit)
+                            @forelse ($colors as $color)
                                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <th>
                                        <span class="text-gray-800 dark:text-gray-300">{{ $loop->iteration }}</span>
                                     </th>
-                                    <td class="text-gray-800 dark:text-gray-300">{{ $unit->name }}</td>
-                                    <td class="text-gray-800 dark:text-gray-300">{{ $unit->acronym }}</td>
+                                    <td class="text-gray-800 dark:text-gray-300">{{ $color->name }}</td>
                                     <td>
                                         <span
-                                            class="badge {{ $unit->status == 1 ? 'badge-success' : 'badge-error' }}">
-                                            {{ $unit->status == 1 ? __('Aktif') : __('Tidak Aktif') }}
+                                            class="badge {{ $color->status == 1 ? 'badge-success' : 'badge-error' }}">
+                                            {{ $color->status == 1 ? __('Aktif') : __('Tidak Aktif') }}
                                         </span>
                                     </td>
                                     <td>
                                         <div class="flex space-x-2">
-                                           <button class="btn btn-primary btn-xs"
-                                                onclick="document.getElementById('editUnitModal{{ $unit->id }}').showModal()">
+                                            <button class="btn btn-primary btn-xs"
+                                                onclick="document.getElementById('editColorModal{{ $color->id }}').showModal()">
                                                 {{ __('Edit') }}
                                             </button>
 
-                                            <button onclick="deleteUnit('{{ route('master.units.destroy', ['id' => $unit->id]) }}')"
+                                            <button onclick="deleteColor('{{ route('master.colors.destroy', ['id' => $color->id]) }}')"
                                                 class="btn btn-secondary btn-xs">
                                                 {{ __('Delete') }}
                                             </button>
@@ -106,7 +105,7 @@
                             @empty
                                 <tr>
                                     <td colspan="4" class="text-center py-4 text-gray-800 dark:text-gray-300">
-                                        {{ __('Tidak ada satuan ditemukan.') }}</td>
+                                        {{ __('Tidak ada warna ditemukan.') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -116,23 +115,23 @@
         </div>
 
         <div class="mt-6">
-            {{ $units->links('pagination::tailwind') }}
+            {{ $colors->links('pagination::tailwind') }}
         </div>
     </div>
 
-    <!-- Create Unit Modal -->
-    @include('admin.units-products.partials.create')
+    <!-- Create Color Modal -->
+    @include('admin.color-products.partials.create')
 
-    <!-- Edit Unit Modals -->
-    @include('admin.units-products.partials.edit', ['unit' => $units])
+    <!-- Edit Color Modals -->
+    @include('admin.color-products.partials.edit', ['colors' => $colors])
 </x-app-layout>
 
 <script>
-    function deleteUnit(url) {
+    function deleteColor(url) {
         // Menggunakan SweetAlert untuk konfirmasi penghapusan
         Swal.fire({
             title: 'Apakah Anda yakin?',
-            text: 'Satuan ini akan dihapus secara permanen.',
+            text: 'Warna ini akan dihapus secara permanen.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
