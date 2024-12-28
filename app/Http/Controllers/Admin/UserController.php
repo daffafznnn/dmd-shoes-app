@@ -5,119 +5,90 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.users.index');
+        $isLoading = true; // Initialize the isLoading variable
+        $search = $request->query('search');
+        $role = $request->query('role');
+
+        $users = User::where(function ($query) use ($search, $role) {
+            if ($search) {
+                $query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            }
+
+            if ($role) {
+                $query->where('role', $role);
+            }
+        })
+            ->paginate(10);
+
+        $isLoading = false; // Set isLoading to false once data is loaded
+
+        return view('admin.users.index', compact('users', 'isLoading'));
     }
 
     public function create()
     {
-        $model = User::class;
-        $action = 'create';
-        $fields = [
-            'name' => 'text',
-            'email' => 'email',
-            'password' => 'password',
-            'role' => 'select', // role harus ada di fields
-        ];
-
-        $rules = [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,user', // validasi role
-        ];
-
-        $options = [
-            'role' => [
-                'admin' => 'Admin',
-                'user' => 'User',
-            ],
-        ];
-
-        return view('admin.users.create', compact('fields', 'rules', 'options', 'model', 'action'));
+        return view('admin.users.partials.create');
     }
 
-    public function edit(User $user)
-    {   
-        $model = User::class;
-        $action = 'edit';
-        $recordId = $user->id;
-        $fields = [
-            'name' => 'text',
-            'email' => 'email',
-            'password' => 'password',
-            'role' => 'select', // role harus ada di fields
-        ];
-
-        $rules = [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
-            'role' => 'required|in:admin,user',
-        ];
-
-        $options = [
-            'role' => [
-                'admin' => 'Admin',
-                'user' => 'User',
-            ],
-        ];
-
-        // Form data
-        $formData = $user->toArray();
-
-        return view('admin.users.edit', compact('fields', 'rules', 'options', 'formData', 'model', 'recordId', 'action'));
-    }
-
-    // Menyimpan data pengguna baru
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-            'role' => 'required|in:admin,user',
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'sometimes|confirmed',
+            'role' => 'required',
         ]);
 
         User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'role' => $validated['role'],
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->get('password', 'password')),
+            'role' => $request->role,
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dibuat.');
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
     }
 
-    // Memperbarui data pengguna
+    public function edit(User $user)
+    {
+        return view('admin.users.partials.edit', compact('user'));
+    }
+
     public function update(Request $request, User $user)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
+        $request->validate([
+            'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8',
-            'role' => 'required|in:admin,user',
+            'password' => 'sometimes|confirmed',
+            'role' => 'required',
         ]);
 
-        $user->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
-            'role' => $validated['role'],
-        ]);
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+        ];
 
-        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil diperbarui.');
+        if ($request->password) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate.');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        session()->flash('message', 'User deleted successfully!');
-        return response()->json(['success' => true]);
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
     }
 }
+
