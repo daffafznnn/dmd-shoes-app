@@ -10,7 +10,6 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $isLoading = true; // Initialize the isLoading variable
         $search = $request->query('search');
         $role = $request->query('role');
 
@@ -26,7 +25,7 @@ class UserController extends Controller
         })
             ->paginate(10);
 
-        $isLoading = false; // Set isLoading to false once data is loaded
+        $isLoading = $users == null ? true : false;
 
         return view('admin.users.index', compact('users', 'isLoading'));
     }
@@ -52,7 +51,7 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
     public function edit(User $user)
@@ -81,14 +80,14 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate.');
+        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil diupdate.');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
+        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dihapus.');
     }
 }
 
