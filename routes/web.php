@@ -3,6 +3,12 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Master\CategoryController;
+use App\Http\Controllers\Master\ProductController;
+use App\Http\Controllers\Master\UnitController;
+use App\Http\Controllers\Master\MaterialController;
+use App\Http\Controllers\Master\SizeController;
+use App\Http\Controllers\Master\ColorController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -19,13 +25,74 @@ Route::middleware('auth')->group(function () {
     // admin and superadmin routes group
     Route::middleware('checkRole:admin,superadmin')->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-        Route::controller(UserController::class)->name('admin.')->group(function () {
-            Route::get('/admin/users', 'index')->name('users.index');
-            Route::get('/admin/users/create', 'create')->name('users.create');
-            Route::post('/admin/users', 'store')->name('users.store');
-            Route::get('/admin/users/{user}/edit', 'edit')->name('users.edit');
-            Route::put('/admin/users/{user}', 'update')->name('users.update');
-            Route::delete('/admin/users/{user}', 'destroy')->name('users.destroy');
+        // Product routes
+        Route::controller(ProductController::class)->name('master.products.')->prefix('admin/master/products')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Material routes
+        Route::controller(MaterialController::class)->name('master.materials.')->prefix('admin/master/materials')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+            Route::get('/{id}', 'show')->name('show');
+        });
+
+        // Category routes
+        Route::controller(CategoryController::class)->name('master.categories.')->prefix('admin/master/categories')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Unit routes
+        Route::controller(UnitController::class)->name('master.units.')->prefix('admin/master/units')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Size routes
+        Route::controller(SizeController::class)->name('master.sizes.')->prefix('admin/master/sizes')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Color routes
+        Route::controller(ColorController::class)->name('master.colors.')->prefix('admin/master/colors')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        Route::controller(UserController::class)->name('admin.')->prefix('admin/users')->group(function () {
+            Route::get('/', 'index')->name('users.index');
+            Route::get('/create', 'create')->name('users.create');
+            Route::post('/', 'store')->name('users.store');
+            Route::get('/{user}/edit', 'edit')->name('users.edit');
+            Route::put('/{user}', 'update')->name('users.update');
+            Route::delete('/{user}', 'destroy')->name('users.destroy');
         });
     });
 
@@ -35,3 +102,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+

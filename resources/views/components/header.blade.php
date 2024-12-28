@@ -1,4 +1,5 @@
-          <header class="relative bg-white dark:bg-darker">
+         @auth
+         <header class="relative bg-white dark:bg-darker">
               <div class="flex items-center justify-between p-2 border-b dark:border-primary-darker">
                   <!-- Mobile menu button -->
                   <button @click="isMobileMainMenuOpen = !isMobileMainMenuOpen"
@@ -492,4 +493,5 @@
                       </div>
                   </nav>
               </div>
-          </header>
+          </header>   
+         @endauth

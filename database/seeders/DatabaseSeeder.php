@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -15,18 +16,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'super admin',
-            'email' => 'superadmin@example.com',
-            'role' => 'superadmin',
-            'password' => bcrypt('password'),
-        ]);
-
-        User::factory()->create([
-            'name' => 'admin',
-            'email' => 'admin@example.com',
-            'role' => 'admin',
-            'password' => bcrypt('password'),
+        $this->call([
+            UserSeeder::class,
+            UnitSeeder::class,
+            CategorySeeder::class,
+            MaterialSeeder::class,
+            SizeSeeder::class,
+            ColorSeeder::class,
         ]);
     }
 }

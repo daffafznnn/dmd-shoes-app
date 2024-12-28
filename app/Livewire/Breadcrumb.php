@@ -7,47 +7,78 @@ use Livewire\Component;
 
 class Breadcrumb extends Component
 {
+    public $title;
     public $breadcrumbs = [];
 
     public function mount()
     {
+        $this->title = $this->getTitleFromRoute();
         $this->breadcrumbs = $this->generateBreadcrumbs();
+    }
+
+    private function getTitleFromRoute()
+    {
+        $routeName = Route::currentRouteName();
+
+        if ($routeName) {
+            $parts = explode('.', $routeName);
+            return ucwords(str_replace(['-', '_'], ' ', end($parts)));
+        }
+
+        return 'Page';
     }
 
     private function generateBreadcrumbs()
     {
-        $routeName = Route::currentRouteName(); // Ambil nama route aktif
-        if (!$routeName) {
-            return [];
-        }
-
-        $segments = explode('.', $routeName); // Pisah nama route berdasarkan "."
+        $routeName = Route::currentRouteName();
+        $segments = explode('.', $routeName);
         $breadcrumbs = [];
-        $currentRoute = '';
 
-        // Tambahkan breadcrumb Home
         $breadcrumbs[] = [
             'label' => 'Home',
-            'url' => route('admin.dashboard'), // Misalnya Home mengarah ke dashboard admin
+            'url' => route('admin.dashboard'),
         ];
 
-        // Generate breadcrumb berdasarkan segmen route
-        if (count($segments) > 0) {
-            // Untuk route utama seperti users, products, dll.
-            $firstSegment = $segments[1]; // Misal users, products
-            $breadcrumbs[] = [
-                'label' => ucwords(str_replace(['-', '_'], ' ', $firstSegment)),
-                'url' => route('admin.' . $firstSegment . '.index'), // Misalnya admin.users.index
-            ];
-        }
-
-        // Jika ada submenu seperti create atau edit
         if (count($segments) > 1) {
-            $secondSegment = $segments[2]; // Misal create, edit
-            $breadcrumbs[] = [
-                'label' => ucwords(str_replace(['-', '_'], ' ', $secondSegment)),
-                'url' => null, // Tidak perlu URL karena ini submenu (current page)
-            ];
+            $prefix = $segments[0];
+
+            if ($prefix === 'admin') {
+                $mainSegment = $segments[1];
+                $baseRoute = 'admin.' . $mainSegment;
+
+                if (Route::has($baseRoute . '.index')) {
+                    $breadcrumbs[] = [
+                        'label' => ucwords(str_replace(['-', '_'], ' ', $mainSegment)),
+                        'url' => route($baseRoute . '.index'),
+                    ];
+                }
+
+                if (count($segments) > 2) {
+                    $lastSegment = end($segments);
+                    $breadcrumbs[] = [
+                        'label' => ucwords(str_replace(['-', '_'], ' ', $lastSegment)),
+                        'url' => null,
+                    ];
+                }
+            } else if ($prefix === 'master') {
+                $mainSegment = $segments[1];
+                $baseRoute = 'master.' . $mainSegment;
+
+                if (Route::has($baseRoute . '.index')) {
+                    $breadcrumbs[] = [
+                        'label' => ucwords(str_replace(['-', '_'], ' ', $mainSegment)),
+                        'url' => route($baseRoute . '.index'),
+                    ];
+                }
+
+                if (count($segments) > 2) {
+                    $lastSegment = end($segments);
+                    $breadcrumbs[] = [
+                        'label' => ucwords(str_replace(['-', '_'], ' ', $lastSegment)),
+                        'url' => null,
+                    ];
+                }
+            }
         }
 
         return $breadcrumbs;
@@ -58,3 +89,4 @@ class Breadcrumb extends Component
         return view('livewire.breadcrumb');
     }
 }
+
