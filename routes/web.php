@@ -31,25 +31,23 @@ Route::middleware('auth')->group(function () {
         });
 
         // Category routes
-        Route::controller(CategoryController::class)->name('master.categories.')->prefix('admin/categories')->group(function () {
+        Route::controller(CategoryController::class)->name('master.categories.')->prefix('admin/master/categories')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
             Route::get('/{id}/edit', 'edit')->name('edit');
             Route::put('/{id}', 'update')->name('update');
             Route::delete('/{id}', 'destroy')->name('destroy');
-            Route::get('/{id}', 'show')->name('show');
         });
 
         // Unit routes
-        Route::controller(UnitController::class)->name('master.units.')->prefix('admin/units')->group(function () {
+        Route::controller(UnitController::class)->name('master.units.')->prefix('admin/master/units')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
             Route::get('/{id}/edit', 'edit')->name('edit');
             Route::put('/{id}', 'update')->name('update');
             Route::delete('/{id}', 'destroy')->name('destroy');
-            Route::get('/{id}', 'show')->name('show');
         });
 
         Route::controller(UserController::class)->name('admin.')->prefix('admin/users')->group(function () {

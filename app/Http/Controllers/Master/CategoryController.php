@@ -26,7 +26,8 @@ class CategoryController extends Controller
             $request->only(['search', 'category', 'status']),
             $request->get('perPage', 10)
         );
-        return view('admin.category.index', compact('categories'));
+        $isLoading = $categories == null ? true : false;
+        return view('admin.category.index', compact('categories', 'isLoading'));
     }
 
     /**
@@ -36,7 +37,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.category.create');
+        return view('admin.category.partials.create');
     }
 
     /**
@@ -48,7 +49,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $this->categoryService->create($request->all());
-        return redirect()->route('master.categories.index')->with('success', 'Category created successfully.');
+        return redirect()->route('master.categories.index')->with('success', 'Kategori berhasil dibuat.');
     }
 
     /**
@@ -60,7 +61,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = $this->categoryService->getById($id);
-        return view('admin.category.edit', compact('category'));
+        return view('admin.category.partials.edit', compact('category'));
     }
 
     /**
@@ -73,7 +74,7 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $this->categoryService->update($id, $request->all());
-        return redirect()->route('master.categories.index')->with('success', 'Category updated successfully.');
+        return redirect()->route('master.categories.index')->with('success', 'Kategori berhasil diupdate.');
     }
 
     /**
@@ -85,6 +86,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $this->categoryService->delete($id);
-        return redirect()->route('master.categories.index')->with('success', 'Category deleted successfully.');
+        return redirect()->route('master.categories.index')->with('success', 'Kategori berhasil dihapus.');
     }
 }
+
