@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('guest.index');
 });
+Route::get('/products', function () {
+    return view('guest.product');
+})->name('products');
 
 Route::middleware('auth')->group(function () {
 
