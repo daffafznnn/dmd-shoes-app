@@ -24,42 +24,43 @@ class ProductRepository extends BaseRepository
         parent::__construct($product);
     }
 
-    /**
-     * Create a new product.
-     */
-    public function create(array $data)
-    {
-        $this->validate($data);
-
-        return parent::create($data);
-    }
-
-    /**
-     * Update an existing product.
-     */
-    public function update($id, array $data)
-    {
-        $this->validate($data, $id);
-
-        return parent::update($id, $data);
-    }
-
-    /**
-     * Validate product data.
-     */
     protected function validate(array $data, $id = null)
     {
         $rules = $this->rules;
 
-        // Modify slug rule for updates
         if ($id) {
             $rules['slug'] = 'required|string|max:255|unique:products,slug,' . $id;
         }
 
-        $validator = Validator::make($data, $rules);
+        return Validator::make($data, $rules);
+    }
+
+    public function create(array $data)
+    {
+        $validator = $this->validate($data);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
+
+        $product = parent::create($data);
+
+        return $product;
     }
+
+    public function update($id, array $data)
+    {
+        $validator = $this->validate($data, $id);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $product = parent::update($id, $data);
+
+        return $product;
+    }
+   
 }
+
+
