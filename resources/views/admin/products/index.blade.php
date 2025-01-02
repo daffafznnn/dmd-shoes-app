@@ -10,6 +10,9 @@
             <h1 class="text-3xl font-semibold text-gray-800 dark:text-white">{{ __('Daftar Produk') }}</h1>
         </div>
 
+        <!-- Session Alert -->
+        <x-session-alert />
+
         <!-- Form Filter Section -->
         <div class="mb-6">
             <div class="card bg-white shadow-lg border dark:border-primary-darker dark:bg-darker">
@@ -78,13 +81,12 @@
                                 </td>
                                 <td>
                                     <div class="flex space-x-2">
-                                        <a href="{{ route('master.products.edit', $product) }}" class="btn btn-primary btn-xs">{{ __('Edit') }}</a>
-                                        <a href="{{ route('master.products.show', $product) }}" class="btn btn-accent btn-xs">{{ __('Detail') }}</a>
-                                        <form action="{{ route('master.products.destroy', $product) }}" method="POST" onsubmit="return confirm('{{ __('Hapus produk ini?') }}');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-secondary btn-xs">{{ __('Hapus') }}</button>
-                                        </form>
+                                        <a href="{{ route('master.products.edit', $product->getRouteKey()) }}" class="btn btn-primary btn-xs">{{ __('Edit') }}</a>
+                                        <a href="{{ route('master.products.show', $product->getRouteKey()) }}" class="btn btn-accent btn-xs">{{ __('Detail') }}</a>
+                                         <button onclick="deleteProduct('{{ route('master.products.destroy', ['id' => $product->id]) }}')"
+                                                class="btn btn-secondary btn-xs">
+                                                {{ __('Delete') }}
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -103,4 +105,46 @@
             {{ $products->links('pagination::tailwind') }}
         </div>
     </div>
+    <script>
+    function deleteProduct(url) {
+        // Menggunakan SweetAlert untuk konfirmasi penghapusan
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: 'Produk ini akan dihapus secara permanen.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Jika konfirmasi, lakukan penghapusan dengan submit form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = url;
+
+                // Tambahkan csrf token dan method DELETE
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = csrfToken;
+
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+
+                form.appendChild(csrfInput);
+                form.appendChild(methodInput);
+
+                // Kirim form untuk menghapus data
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+    }
+</script>
+
 </x-app-layout>
+

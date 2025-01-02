@@ -22,9 +22,6 @@ class ProductService extends BaseService
         $this->productVariantService = $productVariantService;
     }
 
-    /**
-     * Create a new product with variations.
-     */
     public function create(array $data)
     {
         DB::beginTransaction();
@@ -32,79 +29,61 @@ class ProductService extends BaseService
             // Create the product
             $product = $this->productRepository->create($data);
 
-            // Generate the slug from product name
+            // Generate and update the slug
             $slug = Str::slug($product->name);
-
-            // Update the slug
             $this->productRepository->update($product->id, ['slug' => $slug]);
 
+            // Handle product images
+            if (isset($data['images'])) {
+                $this->productRepository->createImages($data['images'], $product->id); // Perbaikan di sini
+            }
+
             // Handle product variants
-            if (isset($data['variants']) && is_array($data['variants'])) {
-                foreach ($data['variants'] as $variantData) {
-                    $variantData['product_id'] = $product->id;
-                    $this->productVariantService->createVariant($variantData);
-                }
+            if (isset($data['variations'])) {
+                $this->productVariantService->createVariantsForProduct($data['variations'], $product->id);
             }
 
             DB::commit();
-
-            // Success message
             Session::flash('success', 'Produk berhasil ditambahkan.');
             return $product;
         } catch (\Exception $e) {
             DB::rollBack();
-
-            // Error message
             Session::flash('error', 'Terjadi kesalahan saat menambahkan produk: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    /**
-     * Update an existing product with variations.
-     */
     public function update($id, array $data)
     {
         DB::beginTransaction();
         try {
-            // Update the product
             $product = $this->productRepository->update($id, $data);
 
-            // Generate the slug from product name
+            // Generate and update the slug
             $slug = Str::slug($product->name);
-
-            // Update the slug
             $this->productRepository->update($product->id, ['slug' => $slug]);
 
+            // Handle product images
+            if (isset($data['images'])) {
+                $this->productRepository->updateImages($data['images'], $product->id); // Perbaikan di sini
+            }
+
             // Handle product variants
-            if (isset($data['variants']) && is_array($data['variants'])) {
-                foreach ($data['variants'] as $variantData) {
-                    if (isset($variantData['id'])) {
-                        $this->productVariantService->updateVariant($variantData['id'], $variantData);
-                    } else {
-                        $variantData['product_id'] = $product->id;
-                        $this->productVariantService->createVariant($variantData);
-                    }
-                }
+            if (isset($data['variations'])) {
+                $this->productVariantService->updateVariantsForProduct($data['variations'], $product->id);
             }
 
             DB::commit();
-
-            // Success message
             Session::flash('success', 'Produk berhasil diperbarui.');
             return $product;
         } catch (\Exception $e) {
             DB::rollBack();
-
-            // Error message
             Session::flash('error', 'Terjadi kesalahan saat memperbarui produk: ' . $e->getMessage());
             throw $e;
         }
     }
 
-    /**
-     * Get a list of products with optional filtering and pagination.
-     */
+    // Menambahkan metode search
     public function search(array $filters = [], $perPage = 10)
     {
         return $this->productRepository->getModel()
@@ -121,9 +100,7 @@ class ProductService extends BaseService
             ->paginate($perPage);
     }
 
-    /**
-     * Get product details with its variants, stocks, and images.
-     */
+    // Menambahkan metode getProductDetails
     public function getProductDetails($productId)
     {
         try {
@@ -133,10 +110,10 @@ class ProductService extends BaseService
                 throw new \Exception("Produk tidak ditemukan.");
             }
 
-            $variants = $this->productRepository->getModel()
-                ->with(['variants.material', 'variants.size', 'variants.color', 'variants.images'])
-                ->find($productId)
-                ->variants;
+            // Mendapatkan variasi produk beserta material, ukuran, warna, dan gambar terkait
+            $variants = $product->variants()
+                ->with(['material', 'size', 'color', 'images'])
+                ->get();
 
             return compact('product', 'variants');
         } catch (\Exception $e) {

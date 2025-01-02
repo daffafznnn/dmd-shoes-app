@@ -15,13 +15,32 @@ class ProductVariantService extends BaseService
     $this->productVariantRepository = $productVariantRepository;
   }
 
+  public function createVariantsForProduct(array $variations, $productId)
+  {
+    foreach ($variations as $variationData) {
+      $variationData['product_id'] = $productId;
+      $this->createVariant($variationData);
+    }
+  }
+
+  public function updateVariantsForProduct(array $variations, $productId)
+  {
+    foreach ($variations as $variationData) {
+      if (isset($variationData['id'])) {
+        $this->updateVariant($variationData['id'], $variationData);
+      } else {
+        $variationData['product_id'] = $productId;
+        $this->createVariant($variationData);
+      }
+    }
+  }
+
   public function createVariant(array $data)
   {
     DB::beginTransaction();
     try {
       $variant = $this->productVariantRepository->create($data);
       DB::commit();
-
       return $variant;
     } catch (\Exception $e) {
       DB::rollBack();
@@ -35,36 +54,10 @@ class ProductVariantService extends BaseService
     try {
       $variant = $this->productVariantRepository->update($id, $data);
       DB::commit();
-
       return $variant;
     } catch (\Exception $e) {
       DB::rollBack();
       throw $e;
     }
   }
-
-  public function deleteVariant($id)
-  {
-    DB::beginTransaction();
-    try {
-      $this->productVariantRepository->delete($id);
-      DB::commit();
-
-      return true;
-    } catch (\Exception $e) {
-      DB::rollBack();
-      throw $e;
-    }
-  }
-
-  public function getVariantById($id)
-  {
-    return $this->productVariantRepository->getModel()->findOrFail($id);
-  }
-
-  public function getAllVariants(array $filters = [])
-  {
-    return $this->productVariantRepository->getModel()->get();
-  }
 }
-

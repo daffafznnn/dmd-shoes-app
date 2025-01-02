@@ -4,10 +4,6 @@ namespace App\Repositories;
 
 use App\Models\ProductVariant;
 use App\Models\ProductStock;
-use App\Models\ProductVariantImage;
-use App\Models\ProductMaterial;
-use App\Models\ProductSize;
-use App\Models\ProductColor;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -29,41 +25,24 @@ class ProductVariantRepository extends BaseRepository
     parent::__construct($productVariant);
   }
 
-  public function create(array $data)
+  public function createVariantsForProduct(array $variations, $productId)
   {
-    $this->validate($data);
-
-    $variant = parent::create($data);
-
-    // Create or associate related entities
-    $this->manageRelatedEntities($variant, $data);
-
-    return $variant;
-  }
-
-  public function update($id, array $data)
-  {
-    $this->validate($data, $id);
-
-    $variant = parent::update($id, $data);
-
-    // Update or associate related entities
-    $this->manageRelatedEntities($variant, $data);
-
-    return $variant;
-  }
-
-  protected function validate(array $data, $id = null)
-  {
-    $rules = $this->rules;
-    if ($id) {
-      // Add unique rules or other customizations for update
+    foreach ($variations as $variationData) {
+      $variationData['product_id'] = $productId;
+      $variant = $this->create($variationData);
+      $this->manageRelatedEntities($variant, $variationData);
     }
+  }
 
-    $validator = Validator::make($data, $rules);
-
-    if ($validator->fails()) {
-      throw new ValidationException($validator);
+  public function updateVariantsForProduct(array $variations, $productId)
+  {
+    foreach ($variations as $variationData) {
+      if (isset($variationData['id'])) {
+        $this->update($variationData['id'], $variationData);
+      } else {
+        $variationData['product_id'] = $productId;
+        $this->create($variationData);
+      }
     }
   }
 
@@ -77,25 +56,7 @@ class ProductVariantRepository extends BaseRepository
       );
     }
 
-    // Associate material
-    if (isset($data['material_id'])) {
-      $variant->material_id = $data['material_id'];
-      $variant->save();
-    }
-
-    // Associate size
-    if (isset($data['size_id'])) {
-      $variant->size_id = $data['size_id'];
-      $variant->save();
-    }
-
-    // Associate color
-    if (isset($data['color_id'])) {
-      $variant->color_id = $data['color_id'];
-      $variant->save();
-    }
-
-    // Manage images
+    // Handle images
     if (isset($data['images']) && is_array($data['images'])) {
       $variant->product_variant_images()->delete();
       foreach ($data['images'] as $image) {
@@ -106,4 +67,3 @@ class ProductVariantRepository extends BaseRepository
     }
   }
 }
-

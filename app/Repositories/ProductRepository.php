@@ -3,6 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use App\Models\ProductImage;
+use App\Repositories\ProductVariantRepository;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -19,9 +22,12 @@ class ProductRepository extends BaseRepository
         'type' => 'required|string',
     ];
 
-    public function __construct(Product $product)
+    protected $productVariantRepository;
+
+    public function __construct(Product $product, ProductVariantRepository $productVariantRepository)
     {
         parent::__construct($product);
+        $this->productVariantRepository = $productVariantRepository;
     }
 
     protected function validate(array $data, $id = null)
@@ -45,6 +51,16 @@ class ProductRepository extends BaseRepository
 
         $product = parent::create($data);
 
+        // Handle product images
+        if (isset($data['images'])) {
+            $this->createImages($data['images'], $product->id);
+        }
+
+        // Handle product variations
+        if (isset($data['variations'])) {
+            $this->productVariantRepository->createVariantsForProduct($data['variations'], $product->id);
+        }
+
         return $product;
     }
 
@@ -58,9 +74,38 @@ class ProductRepository extends BaseRepository
 
         $product = parent::update($id, $data);
 
+        // Handle product images
+        if (isset($data['images'])) {
+            $this->updateImages($data['images'], $product->id);
+        }
+
+        // Handle product variations
+        if (isset($data['variations'])) {
+            $this->productVariantRepository->updateVariantsForProduct($data['variations'], $product->id);
+        }
+
         return $product;
     }
-   
+
+    public function createImages(array $images, $productId)
+    {
+        foreach ($images as $image) {
+            $path = $image->store('public/products');
+            ProductImage::create([
+                'product_id' => $productId,
+                'image_path' => $path,
+                'is_main' => isset($image['is_main']) ? $image['is_main'] : false,
+                'sort_order' => $image['sort_order'] ?? 0,
+            ]);
+        }
+    }
+
+    public function updateImages(array $images, $productId)
+    {
+        // Delete old images
+        ProductImage::where('product_id', $productId)->delete();
+
+        // Create new images
+        $this->createImages($images, $productId);
+    }
 }
-
-
