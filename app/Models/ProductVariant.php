@@ -38,11 +38,11 @@ class ProductVariant extends Model
 
     public function product_stocks()
     {
-        return $this->hasMany(ProductStock::class, 'id', 'product_variant_id');
+        return $this->hasMany(ProductStock::class, 'product_variant_id', 'id');
     }
 
     public function product_variant_images()
     {
-        return $this->hasMany(ProductVariantImage::class, 'id', 'product_variant_id');
+        return $this->hasMany(ProductVariantImage::class, 'product_variant_id', 'id');
     }
 }

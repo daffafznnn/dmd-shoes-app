@@ -22,8 +22,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div class="col-span-2 lg:col-span-3">
                                 <label for="search" class="block text-sm font-medium text-gray-800 dark:text-gray-300">{{ __('Cari') }}</label>
-                                <input type="text" name="search" id="search" class="input input-bordered w-full bg-white dark:bg-darker" 
-                                    placeholder="{{ __('Cari nama produk') }}" 
+                                <input type="text" name="search" id="search" class="input input-bordered w-full bg-white dark:bg-darker"
+                                    placeholder="{{ __('Cari nama produk') }}"
                                     value="{{ request()->query('search') }}">
                             </div>
                             <div>
@@ -62,8 +62,7 @@
                     <thead>
                         <tr class="bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300">
                             <th>{{ __('Nama Produk') }}</th>
-                            <th>{{ __('Harga') }}</th>
-                            <th>{{ __('Stok') }}</th>
+                            <th>{{ __('Kategori') }}</th>
                             <th>{{ __('Status') }}</th>
                             <th>{{ __('Aksi') }}</th>
                         </tr>
@@ -72,8 +71,7 @@
                         @forelse ($products as $product)
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td class="text-gray-800 dark:text-gray-300">{{ $product->name }}</td>
-                                <td class="text-gray-800 dark:text-gray-300">Rp {{ number_format($product->price, 0, ',', '.') }}</td>
-                                <td class="text-gray-800 dark:text-gray-300">{{ $product->stock }}</td>
+                                <td class="text-gray-800 dark:text-gray-300">{{ $product->categories->name }}</td>
                                 <td>
                                     <span class="badge {{ $product->status == 1 ? 'badge-success' : 'badge-error' }}">
                                         {{ $product->status == 1 ? __('Aktif') : __('Tidak Aktif') }}
@@ -83,7 +81,7 @@
                                     <div class="flex space-x-2">
                                         <a href="{{ route('master.products.edit', $product->getRouteKey()) }}" class="btn btn-primary btn-xs">{{ __('Edit') }}</a>
                                         <a href="{{ route('master.products.show', $product->getRouteKey()) }}" class="btn btn-accent btn-xs">{{ __('Detail') }}</a>
-                                         <button onclick="deleteProduct('{{ route('master.products.destroy', ['id' => $product->id]) }}')"
+                                        <button onclick="deleteProduct('{{ route('master.products.destroy', ['id' => $product->id]) }}')"
                                                 class="btn btn-secondary btn-xs">
                                                 {{ __('Delete') }}
                                         </button>
@@ -92,7 +90,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="text-center py-4 text-gray-800 dark:text-gray-300">{{ __('Tidak ada produk ditemukan.') }}</td>
+                                <td colspan="4" class="text-center py-4 text-gray-800 dark:text-gray-300">{{ __('Tidak ada produk ditemukan.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -105,46 +103,46 @@
             {{ $products->links('pagination::tailwind') }}
         </div>
     </div>
+
     <script>
-    function deleteProduct(url) {
-        // Menggunakan SweetAlert untuk konfirmasi penghapusan
-        Swal.fire({
-            title: 'Apakah Anda yakin?',
-            text: 'Produk ini akan dihapus secara permanen.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Ya, Hapus!',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Jika konfirmasi, lakukan penghapusan dengan submit form
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = url;
+        function deleteProduct(url) {
+            // Menggunakan SweetAlert untuk konfirmasi penghapusan
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: 'Produk ini akan dihapus secara permanen.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Jika konfirmasi, lakukan penghapusan dengan submit form
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = url;
 
-                // Tambahkan csrf token dan method DELETE
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '_token';
-                csrfInput.value = csrfToken;
+                    // Tambahkan csrf token dan method DELETE
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = csrfToken;
 
-                const methodInput = document.createElement('input');
-                methodInput.type = 'hidden';
-                methodInput.name = '_method';
-                methodInput.value = 'DELETE';
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
 
-                form.appendChild(csrfInput);
-                form.appendChild(methodInput);
+                    form.appendChild(csrfInput);
+                    form.appendChild(methodInput);
 
-                // Kirim form untuk menghapus data
-                document.body.appendChild(form);
-                form.submit();
-            }
-        });
-    }
-</script>
+                    // Kirim form untuk menghapus data
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    </script>
 
 </x-app-layout>
-
