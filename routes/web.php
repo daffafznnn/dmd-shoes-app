@@ -9,6 +9,7 @@ use App\Http\Controllers\Master\UnitController;
 use App\Http\Controllers\Master\MaterialController;
 use App\Http\Controllers\Master\SizeController;
 use App\Http\Controllers\Master\ColorController;
+use App\Http\Controllers\Master\BannerController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -83,6 +84,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', 'edit')->name('edit');
             Route::put('/{id}', 'update')->name('update');
             Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Banner routes
+        Route::controller(BannerController::class)->name('master.banners.')->prefix('admin/master/banners')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{slug}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+            Route::get('/{slug}', 'show')->name('show');
         });
 
         Route::controller(UserController::class)->name('admin.')->prefix('admin/users')->group(function () {

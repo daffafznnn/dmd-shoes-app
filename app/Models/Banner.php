@@ -15,11 +15,21 @@ class Banner extends Model
         'alt_text',
         'target_url',
         'status',
-        'sort_order',
         'start_date',
         'end_date',
         'meta_title',
         'meta_description',
         'meta_keywords',
     ];
+
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+    ];
+
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }
