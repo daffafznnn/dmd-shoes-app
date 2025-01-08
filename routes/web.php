@@ -10,7 +10,9 @@ use App\Http\Controllers\Master\MaterialController;
 use App\Http\Controllers\Master\SizeController;
 use App\Http\Controllers\Master\ColorController;
 use App\Http\Controllers\Master\BannerController;
-
+use App\Http\Controllers\Settings\GeneralController;
+use App\Http\Controllers\Settings\PaymentMethodController;
+use App\Http\Controllers\Settings\ShippingMethodController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -18,7 +20,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function   () {
 
     // admin and superadmin routes group
     Route::middleware('checkRole:admin,superadmin')->group(function () {
@@ -104,6 +106,33 @@ Route::middleware('auth')->group(function () {
             Route::get('/{user}/edit', 'edit')->name('users.edit');
             Route::put('/{user}', 'update')->name('users.update');
             Route::delete('/{user}', 'destroy')->name('users.destroy');
+        });
+    });
+
+    Route::middleware('checkRole:superadmin')->group(function () {
+        Route::controller(GeneralController::class)->name('admin.settings.')->prefix('admin/settings')->group(function () {
+            Route::get('/', 'edit')->name('edit');
+            Route::patch('/', 'update')->name('update');
+        });
+
+        // Payment method routes
+        Route::controller(PaymentMethodController::class)->name('admin.payment-methods.')->prefix('admin/settings/payment-methods')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Shipping method routes
+        Route::controller(ShippingMethodController::class)->name('admin.shipping-methods.')->prefix('admin/settings/shipping-methods')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
         });
     });
 

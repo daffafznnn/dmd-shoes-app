@@ -153,7 +153,8 @@
                     </div>
                 </div>
 
-                <!-- User Management -->
+                @if (Auth::user()->role == 'superadmin')
+                                    <!-- User Management -->
                 <div x-data="{ isActive: {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'true' : 'false' }}, open: false }">
                     <a href="#" @click="$event.preventDefault(); open = !open"
                         class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
@@ -200,19 +201,25 @@
                         </span>
                     </a>
                     <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Pengaturan Umum') }}</a>
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Metode Pembayaran') }}</a>
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Metode Ekspedisi') }}</a>
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Pengaturan API') }}</a>
+                        <a href="{{ route('admin.settings.edit') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/settings') ? 'true' : 'false' }} }"
+                            >{{ __('Pengaturan Umum') }}</a>
+                        <a href="{{ route('admin.payment-methods.index') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/settings/payment-methods*') ? 'true' : 'false' }} }"
+                            >{{ __('Metode Pembayaran') }}</a>
+                        <a href="{{ route('admin.shipping-methods.index') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/settings/shipping-methods*') ? 'true' : 'false' }} }"
+                            >{{ __('Metode Ekspedisi') }}</a>
+                        {{-- <a href="#"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Pengaturan API') }}</a> --}}
                     </div>
                 </div>
+                @endif
 
             </nav>
-
             <!-- Sidebar footer -->
             <div class="flex-shrink-0 px-2 py-4 space-y-2">
                 <button @click="openSettingsPanel" type="button"

@@ -25,11 +25,11 @@ class Setting extends Model
 
     public function social_settings()
     {
-        return $this->belongsTo(SocialSetting::class, 'id', 'setting_id');
+        return $this->hasMany(SocialSetting::class, 'setting_id', 'id');
     }
 
     public function api_settings()
     {
-        return $this->hasMany(ApiSetting::class, 'id', 'setting_id');
+        return $this->hasMany(ApiSetting::class, 'setting_id', 'id');
     }
 }
