@@ -95,10 +95,11 @@
                       <div class="relative" x-data="{ open: false }">
                           <button @click="open = !open; $nextTick(() => { if(open){ $refs.userMenu.focus() } })"
                               type="button" aria-haspopup="true" :aria-expanded="open ? 'true' : 'false'"
-                              class="transition-opacity duration-200 rounded-full dark:opacity-75 dark:hover:opacity-100 focus:outline-none focus:ring dark:focus:opacity-100">
+                              class="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker">
                               <span class="sr-only">User menu</span>
-                              <img class="w-10 h-10 rounded-full" src="{{ asset('assets/images/user.png') }}"
-                                  alt="user" />
+                              <svg class="w-8 h-8 rounded-full dark:text-primary-light" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
                           </button>
 
                           <!-- User dropdown menu -->
@@ -114,10 +115,6 @@
                               <a href="{{ route('profile.edit') }}" role="menuitem"
                                   class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary">
                                   {{ __('Your Profile') }}
-                              </a>
-                              <a href="#" role="menuitem"
-                                  class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary">
-                                  Settings
                               </a>
                               <!-- Form Logout -->
                               <form action="{{ route('logout') }}" method="POST"
