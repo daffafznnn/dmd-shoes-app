@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\Master\CategoryController;
 use App\Http\Controllers\Master\ProductController;
 use App\Http\Controllers\Master\UnitController;
@@ -13,12 +14,10 @@ use App\Http\Controllers\Master\ColorController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::get('/', function () {
-    return view('guest.index');
+Route::middleware('guest')->controller(GuestController::class)->group(function () {
+    Route::get('/', 'index')->name('guest.index');
+    Route::get('/detail/{id}', 'viewDetail')->name('guest.detail');
 });
-Route::get('/products', function () {
-    return view('guest.product');
-})->name('products');
 
 Route::middleware('auth')->group(function () {
 
@@ -101,5 +100,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
-
+require __DIR__ . '/auth.php';

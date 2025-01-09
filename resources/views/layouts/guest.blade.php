@@ -50,7 +50,7 @@
 
             // Update the position of the carousel
             function updateCarouselPosition() {
-                const offset = -currentIndex * 100; // Move the carousel based on the index
+                let offset = -currentIndex * 100; // Move the carousel based on the index
                 carousel.style.transform = `translateX(${offset}%)`;
             }
 
