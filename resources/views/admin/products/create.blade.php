@@ -84,8 +84,8 @@
                             <label for="type" class="block text-sm font-medium text-gray-800 dark:text-gray-300">{{ __('Tipe Produk') }}</label>
                             <select name="type" id="type" class="select select-bordered w-full bg-white dark:bg-darker">
                                 <option value="unisex">{{ __('Unisex') }}</option>
-                                <option value="pria">{{ __('Pria') }}</option>
-                                <option value="wanita">{{ __('Wanita') }}</option>
+                                <option value="man">{{ __('Pria') }}</option>
+                                <option value="woman">{{ __('Wanita') }}</option>
                             </select>
                             @error('type') <span class="text-red-500">{{ $message }}</span> @enderror
                         </div>

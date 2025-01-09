@@ -14,51 +14,23 @@
 
     <script src="https://kit.fontawesome.com/f3a53ecdc1.js" crossorigin="anonymous"></script>
 
+    @stack('styles')
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="font-sans text-gray-900 bg-gray-100 antialiased">
-    {{ $slot }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const prevButton = document.getElementById('prev');
-            const nextButton = document.getElementById('next');
-            const carousel = document.getElementById('carousel');
-            let currentIndex = 0;
-            const slides = carousel.children;
-
-            // Function to show the next slide
-            function showNextSlide() {
-                if (currentIndex < slides.length - 1) {
-                    currentIndex++;
-                } else {
-                    currentIndex = 0; // Loop back to the first slide
-                }
-                updateCarouselPosition();
-            }
-
-            // Function to show the previous slide
-            function showPrevSlide() {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                } else {
-                    currentIndex = slides.length - 1; // Loop back to the last slide
-                }
-                updateCarouselPosition();
-            }
-
-            // Update the position of the carousel
-            function updateCarouselPosition() {
-                let offset = -currentIndex * 100; // Move the carousel based on the index
-                carousel.style.transform = `translateX(${offset}%)`;
-            }
-
-            // Event listeners for buttons
-            nextButton.addEventListener('click', showNextSlide);
-            prevButton.addEventListener('click', showPrevSlide);
-        });
-    </script>
+    <!-- Header -->
+    <x-guest.header />
+    <!-- New Navigation Below Header -->
+    <x-guest.navbar />
+    <!-- Page Content -->
+    <main>
+        {{ $slot }}
+    </main>
+    <!-- Footer -->
+    <x-guest.footer />
+    @stack('scripts')
 </body>
 
 </html>
