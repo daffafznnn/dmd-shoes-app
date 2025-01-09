@@ -34,12 +34,12 @@ class Product extends Model
 
     public function product_variants()
     {
-        return $this->hasMany(ProductVariant::class, 'id', 'product_id');
+        return $this->hasMany(ProductVariant::class, 'product_id', 'id');
     }
 
     public function product_images()
     {
-        return $this->hasMany(ProductImage::class, 'id', 'product_id');
+        return $this->hasMany(ProductImage::class,  'product_id', 'id');
     }
 
     public function order_details()

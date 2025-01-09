@@ -10,7 +10,11 @@ use App\Http\Controllers\Master\UnitController;
 use App\Http\Controllers\Master\MaterialController;
 use App\Http\Controllers\Master\SizeController;
 use App\Http\Controllers\Master\ColorController;
-
+use App\Http\Controllers\Master\BannerController;
+use App\Http\Controllers\Settings\GeneralController;
+use App\Http\Controllers\Settings\PaymentMethodController;
+use App\Http\Controllers\Settings\ShippingMethodController;
+use App\Http\Controllers\Settings\SocialController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -19,7 +23,7 @@ Route::middleware('guest')->controller(GuestController::class)->group(function (
     Route::get('/detail/{id}', 'viewDetail')->name('guest.detail');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function   () {
 
     // admin and superadmin routes group
     Route::middleware('checkRole:admin,superadmin')->group(function () {
@@ -28,10 +32,12 @@ Route::middleware('auth')->group(function () {
         Route::controller(ProductController::class)->name('master.products.')->prefix('admin/master/products')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
+            Route::get('/{slug}', 'show')->name('show');
             Route::post('/', 'store')->name('store');
-            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::get('/{slug}/edit', 'edit')->name('edit');
             Route::put('/{id}', 'update')->name('update');
             Route::delete('/{id}', 'destroy')->name('destroy');
+            Route::delete('/images/{id}', 'destroyImage')->name('destroyImage');
         });
 
         // Material routes
@@ -85,6 +91,17 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}', 'destroy')->name('destroy');
         });
 
+        // Banner routes
+        Route::controller(BannerController::class)->name('master.banners.')->prefix('admin/master/banners')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{slug}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+            Route::get('/{slug}', 'show')->name('show');
+        });
+
         Route::controller(UserController::class)->name('admin.')->prefix('admin/users')->group(function () {
             Route::get('/', 'index')->name('users.index');
             Route::get('/create', 'create')->name('users.create');
@@ -92,6 +109,43 @@ Route::middleware('auth')->group(function () {
             Route::get('/{user}/edit', 'edit')->name('users.edit');
             Route::put('/{user}', 'update')->name('users.update');
             Route::delete('/{user}', 'destroy')->name('users.destroy');
+        });
+    });
+
+    Route::middleware('checkRole:superadmin')->group(function () {
+        Route::controller(GeneralController::class)->name('admin.settings.')->prefix('admin/settings/general')->group(function () {
+            Route::get('/', 'edit')->name('edit');
+            Route::patch('/', 'update')->name('update');
+        });
+
+        // Payment method routes
+        Route::controller(PaymentMethodController::class)->name('admin.payment-methods.')->prefix('admin/settings/payment-methods')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Shipping method routes
+        Route::controller(ShippingMethodController::class)->name('admin.shipping-methods.')->prefix('admin/settings/shipping-methods')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Social media routes
+        Route::controller(SocialController::class)->name('admin.socials.')->prefix('admin/settings/socials')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
         });
     });
 

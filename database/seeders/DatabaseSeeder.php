@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             MaterialSeeder::class,
             SizeSeeder::class,
             ColorSeeder::class,
+            SettingsSeeder::class,
         ]);
     }
 }

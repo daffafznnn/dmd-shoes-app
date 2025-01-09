@@ -100,7 +100,7 @@
 
 
                 <!-- Order Management -->
-                <div x-data="{ isActive: {{ Request::is('admin/orders') || Request::is('admin/orders/*') ? 'true' : 'false' }}, open: false }">
+                <div x-data="{ isActive: {{ Request::is('admin/orders*') ? 'true' : 'false' }}, open: {{ Request::is('admin/orders*') ? 'true' : 'false' }} }">
                     <a href="#" @click="$event.preventDefault(); open = !open"
                         class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
                         :class="{ 'bg-primary-100 dark:bg-primary': isActive || open }" role="button" aria-haspopup="true"
@@ -124,37 +124,50 @@
                     </div>
                 </div>
 
-                <!-- User Management -->
-                <div x-data="{ isActive: {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'true' : 'false' }}, open: false }">
+                <!-- Banner Management -->
+                <div x-data="{ isActive: {{ Request::is('admin/master/banners*') ? 'true' : 'false' }}, open: {{ Request::is('admin/master/banners*') ? 'true' : 'false' }} }">
                     <a href="#" @click="$event.preventDefault(); open = !open"
                         class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
                         :class="{ 'bg-primary-100 dark:bg-primary': isActive || open }" role="button" aria-haspopup="true"
                         :aria-expanded="(open || isActive) ? 'true' : 'false'">
                         <span aria-hidden="true">
-                            <i class="bi bi-person w-5 h-5"></i> <!-- Bootstrap Icon for Users -->
+                            <i class="bi bi-image w-5 h-5"></i> <!-- Bootstrap Icon for Banners -->
                         </span>
-                        <span class="ml-2 text-sm"> {{ __('Manajemen Pengguna') }} </span>
+                        <span class="ml-2 text-sm"> {{ __('Manajemen Banner') }} </span>
                         <span class="ml-auto" aria-hidden="true">
                             <svg class="w-4 h-4 transition-transform transform" :class="{ 'rotate-180': open }"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 9l-7 7-7-7" />
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </span>
                     </a>
                     <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
-                        <a href="{{ route('admin.users.index') }}"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700
-                        {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'text-primary-200' : '' }}">{{ __('Daftar Pengguna') }}</a>
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700
-                        {{ Request::is('admin/users/create') ? 'text-primary-200' : '' }}">{{ __('Tambah Pengguna') }}</a>
+                        <a href="{{ route('master.banners.index') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/banners') ? 'true' : 'false' }} }"
+                            >{{ __('Daftar Banner') }}</a>
+                        <a href="{{ route('master.banners.create') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/banners/create') ? 'true' : 'false' }} }"
+                            >{{ __('Tambah Banner') }}</a>
                     </div>
                 </div>
 
+                @if (Auth::user()->role == 'superadmin')
+                                    <!-- User Management -->
+                <a href="{{ route('admin.users.index') }}"
+                    class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
+                    :class="{ 'bg-primary-100 dark:bg-primary': {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'true' : 'false' }} }"
+                    role="button" aria-haspopup="true"
+                    :aria-expanded="{{ Request::is('admin/users/*') ? 'true' : 'false' }}">
+                    <span aria-hidden="true">
+                        <i class="bi bi-person w-5 h-5"></i> <!-- Bootstrap Icon for Users -->
+                    </span>
+                    <span class="ml-2 text-sm"> {{ __('Manajemen Pengguna') }} </span>
+                </a>
+
                 <!-- Settings -->
-                <div x-data="{ isActive: {{ Request::is('admin/settings') || Request::is('admin/settings/*') ? 'true' : 'false' }}, open: false }">
+                <div x-data="{ isActive: {{ Request::is('admin/settings') || Request::is('admin/settings/*') ? 'true' : 'false' }}, open: {{ Request::is('admin/settings/*') ? 'true' : 'false' }} }">
                     <a href="#" @click="$event.preventDefault(); open = !open"
                         class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
                         :class="{ 'bg-primary-100 dark:bg-primary': isActive || open }" role="button"
@@ -173,19 +186,27 @@
                         </span>
                     </a>
                     <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Pengaturan Umum') }}</a>
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Metode Pembayaran') }}</a>
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Metode Ekspedisi') }}</a>
-                        <a href="#"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Pengaturan API') }}</a>
+                        <a href="{{ route('admin.settings.edit') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/settings/general') ? 'true' : 'false' }} }"
+                            >{{ __('Pengaturan Umum') }}</a>
+                        <a href="{{ route('admin.payment-methods.index') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/settings/payment-methods*') ? 'true' : 'false' }} }"
+                            >{{ __('Metode Pembayaran') }}</a>
+                        <a href="{{ route('admin.shipping-methods.index') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/settings/shipping-methods*') ? 'true' : 'false' }} }"
+                            >{{ __('Metode Ekspedisi') }}</a>
+                        <a href="{{ route('admin.socials.index') }}"
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/settings/socials*') ? 'true' : 'false' }} }"
+                            >{{ __('Sosial Media') }}</a>
                     </div>
                 </div>
+                @endif
 
             </nav>
-
             <!-- Sidebar footer -->
             <div class="flex-shrink-0 px-2 py-4 space-y-2">
                 <button @click="openSettingsPanel" type="button"
