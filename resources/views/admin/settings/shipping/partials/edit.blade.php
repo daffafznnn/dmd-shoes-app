@@ -7,7 +7,7 @@
                 <div class="mt-4 space-y-4">
                     <input type="text" name="name" value="{{ $shipmentMethod->name }}"
                         placeholder="{{ __('Nama Metode Pengiriman') }}" class="input input-bordered w-full bg-white dark:bg-darker" required>
-                    <input type="number" name="cost" value="{{ $shipmentMethod->cost }}"
+                    <input type="number" step="0.01" name="cost" value="{{ $shipmentMethod->cost }}"
                         placeholder="{{ __('Biaya') }}" class="input input-bordered w-full bg-white dark:bg-darker" required>
                     <select name="is_active" class="select select-bordered w-full bg-white dark:bg-darker" required>
                         <option value="1" {{ $shipmentMethod->is_active == 1 ? 'selected' : '' }}>{{ __('Aktif') }}

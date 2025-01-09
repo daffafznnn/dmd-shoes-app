@@ -22,14 +22,4 @@ class Setting extends Model
         'is_maintenance',
         'app_key'
     ];
-
-    public function social_settings()
-    {
-        return $this->hasMany(SocialSetting::class, 'setting_id', 'id');
-    }
-
-    public function api_settings()
-    {
-        return $this->hasMany(ApiSetting::class, 'setting_id', 'id');
-    }
 }

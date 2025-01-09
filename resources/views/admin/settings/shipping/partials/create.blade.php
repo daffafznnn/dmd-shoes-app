@@ -4,7 +4,7 @@
         <h3 class="font-bold text-lg text-gray-800 dark:text-gray-300">{{ __('Tambah Metode Pengiriman') }}</h3>
         <div class="mt-4 space-y-4">
             <input type="text" name="name" placeholder="{{ __('Nama Metode Pengiriman') }}" class="input input-bordered w-full bg-white dark:bg-darker" required>
-            <input type="number" name="cost" placeholder="{{ __('Biaya') }}" class="input input-bordered w-full bg-white dark:bg-darker" required>
+            <input type="number" step="0.01" name="cost" placeholder="{{ __('Biaya') }}" class="input input-bordered w-full bg-white dark:bg-darker" required>
             <select name="is_active" class="select select-bordered w-full bg-white dark:bg-darker" required>
                 <option value="1">{{ __('Aktif') }}</option>
                 <option value="0">{{ __('Tidak Aktif') }}</option>

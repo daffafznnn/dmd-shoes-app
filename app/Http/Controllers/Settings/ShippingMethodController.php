@@ -79,18 +79,14 @@ class ShippingMethodController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'cost' => ['required', 'integer'],
+            'cost' => ['required', 'numeric', 'regex:/^\d+(\.\d{1,2})?$/'],
             'is_active' => ['required', 'boolean'],
         ]);
 
+        $shipment = ShippingMethod::findOrFail($id);
+
         try {
-            $shipment = ShippingMethod::findOrFail($id);
-
-            $shipment->name = $request->input('name');
-            $shipment->cost = $request->input('cost');
-            $shipment->is_active = $request->input('is_active');
-
-            ShippingMethod::where('id', $id)->update([
+            $shipment->update([
                 'name' => $request->input('name'),
                 'cost' => $request->input('cost'),
                 'is_active' => $request->input('is_active'),

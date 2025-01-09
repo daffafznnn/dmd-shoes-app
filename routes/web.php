@@ -13,6 +13,7 @@ use App\Http\Controllers\Master\BannerController;
 use App\Http\Controllers\Settings\GeneralController;
 use App\Http\Controllers\Settings\PaymentMethodController;
 use App\Http\Controllers\Settings\ShippingMethodController;
+use App\Http\Controllers\Settings\SocialController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -110,7 +111,7 @@ Route::middleware('auth')->group(function   () {
     });
 
     Route::middleware('checkRole:superadmin')->group(function () {
-        Route::controller(GeneralController::class)->name('admin.settings.')->prefix('admin/settings')->group(function () {
+        Route::controller(GeneralController::class)->name('admin.settings.')->prefix('admin/settings/general')->group(function () {
             Route::get('/', 'edit')->name('edit');
             Route::patch('/', 'update')->name('update');
         });
@@ -127,6 +128,16 @@ Route::middleware('auth')->group(function   () {
 
         // Shipping method routes
         Route::controller(ShippingMethodController::class)->name('admin.shipping-methods.')->prefix('admin/settings/shipping-methods')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit');
+            Route::put('/{id}', 'update')->name('update');
+            Route::delete('/{id}', 'destroy')->name('destroy');
+        });
+
+        // Social media routes
+        Route::controller(SocialController::class)->name('admin.socials.')->prefix('admin/settings/socials')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
