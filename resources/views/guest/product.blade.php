@@ -5,7 +5,7 @@
             <!-- Product Image -->
             <div class="relative">
                 <img id="main-image" src="{{ asset('storage/' . $product->cover) }}" alt="{{ $product->name }}"
-                    class="w-full h-96 object-contain rounded-lg shadow-lg p-4">
+                    class="w-full h-96 object-contain rounded-lg shadow-lg p-4 border border-green-500">
 
                 <!-- Thumbnail Images -->
                 <div id="thumbnails" class="flex mt-4 space-x-2">
