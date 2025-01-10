@@ -16,12 +16,26 @@ use App\Http\Controllers\Settings\PaymentMethodController;
 use App\Http\Controllers\Settings\ShippingMethodController;
 use App\Http\Controllers\Settings\SocialController;
 use Illuminate\Support\Facades\Route;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Illuminate\Support\Facades\App;
 
+Route::group(
+    [
+        'prefix' => LaravelLocalization::setLocale(),
+        'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath']
+    ],
+    function () {
+        Route::get('/test', function () {
+            return App::getLocale();
+        });
 
-Route::middleware('guest')->controller(GuestController::class)->group(function () {
-    Route::get('/', 'index')->name('guest.index');
-    Route::get('/detail/{id}', 'viewDetail')->name('guest.detail');
-});
+        Route::middleware('guest')->controller(GuestController::class)->group(function () {
+            Route::get('/', 'index')->name('guest.index');
+            Route::get('/product/detail/{slug}', 'viewDetail')->name('product.detail');
+        });
+    }
+);
+
 
 Route::middleware('auth')->group(function   () {
 

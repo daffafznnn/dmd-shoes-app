@@ -1,3 +1,11 @@
+    @php
+        use App\Models\Setting;
+        use Illuminate\Support\Facades\App;
+
+        $language = App::getLocale();
+
+        $setting = Setting::first();
+    @endphp
     <!-- Header Section -->
     <header class="z-50 w-full h-24 bg-white">
         <div class="container flex items-center justify-center h-full max-w-6xl px-8 mx-auto sm:justify-between xl:px-0">
@@ -18,14 +26,22 @@
                     </div>
                 </a>
 
+                <label for="languageSwitch" class="swap text-lg font-bold text-gray-800 cursor-pointer">
+                    <input type="checkbox" id="languageSwitch" {{ $language == 'en' ? 'checked' : '' }} class="hidden" />
+                    <div class="swap-on flex items-center">
+                        <i class="bi bi-translate mr-2"></i>
+                        <span class="mr-2" id="languageText">English</span>
+                    </div>
+                    <div class="swap-off flex items-center">
+                        <i class="bi bi-translate mr-2"></i>
+                        <span class="mr-2" id="languageText">Indonesia</span>
+                    </div>
+                </label>
+                
                 <div
                     class="flex flex-col block w-full font-medium border-t border-gray-200 text-green-500 hover:text-white hover:bg-green-500 md:hidden">
                     <a href="#_" class="w-full py-2 font-bold text-center"><i
                             class="fa-brands fa-whatsapp mr-2"></i>Chat online now!</a>
-                </div>
-                <div
-                    class="flex flex-col block w-full font-medium border-t border-gray-200 text-blue-500 hover:text-white hover:bg-blue-500 md:hidden">
-                    <a href="#_" class="w-full py-2 font-bold text-center">Login</a>
                 </div>
             </nav>
 
@@ -38,17 +54,26 @@
         </div>
     </header>
     @push('scripts')
-    <script>
-        if (document.getElementById('nav-mobile-btn')) {
-            document.getElementById('nav-mobile-btn').addEventListener('click', function() {
-                if (this.classList.contains('close')) {
-                    document.getElementById('nav').classList.add('hidden');
-                    this.classList.remove('close');
-                } else {
-                    document.getElementById('nav').classList.remove('hidden');
-                    this.classList.add('close');
-                }
+        <script>
+            if (document.getElementById('nav-mobile-btn')) {
+                document.getElementById('nav-mobile-btn').addEventListener('click', function() {
+                    if (this.classList.contains('close')) {
+                        document.getElementById('nav').classList.add('hidden');
+                        this.classList.remove('close');
+                    } else {
+                        document.getElementById('nav').classList.remove('hidden');
+                        this.classList.add('close');
+                    }
+                });
+            }
+             document.getElementById('languageSwitch').addEventListener('change', function () {
+                const isEnglish = this.checked;
+                const url = isEnglish
+                ? "{{ LaravelLocalization::getLocalizedURL('en') }}"
+                : "{{ LaravelLocalization::getLocalizedURL('id') }}";
+
+                window.location.href = url;
             });
-        }
-    </script>
+        </script>
     @endpush
+

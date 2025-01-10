@@ -1,76 +1,54 @@
+@if ($banners->count() == 0)
+    <section class="container mx-auto px-4 py-8 h-[10rem]">
+        <div class="text-center">
+            <span class="loading loading-dots loading-lg text-green-500"></span>
+        </div>
+    </section>
+@else
     <div class="relative w-full max-w-6xl mx-auto overflow-hidden mt-5">
         <!-- Carousel container -->
-        <div id="carousel" class="carousel flex transition-all duration-500 ease-in-out">
-            <!-- Slide 1 -->
-            <div class="relative flex-shrink-0 w-full h-64 lg:h-72 xl:h-80">
-                <img src="{{ asset('assets/images/carousel-1.webp') }}" alt="Image 1" class="w-full h-full">
+        <div class="swiper-container h-[27rem]"> <!-- Mengubah tinggi menjadi 5h-[27rem]px -->
+            <div class="swiper-wrapper">
+                @foreach ($banners as $banner)
+                    <div class="swiper-slide">
+                        <a href="{{ $banner->target_url ?? '#' }}">
+                            <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->alt_text }}" class="w-full h-[27rem] object-cover"> <!-- Mengatur gambar agar mengisi 44px -->
+                        </a>
+                    </div>
+                @endforeach
             </div>
 
-            <!-- Slide 2 -->
-            <div class="relative flex-shrink-0 w-full h-64 lg:h-72 xl:h-80">
-                <img src="{{ asset('assets/images/carousel-2.webp') }}" alt="Image 2"
-                    class="w-full h-full object-cover">
-            </div>
+            <!-- Pagination (optional) -->
+            <div class="swiper-pagination text-green-500"></div>
 
-            <!-- Slide 3 -->
-            <div class="relative flex-shrink-0 w-full h-64 lg:h-72 xl:h-80">
-                <img src="{{ asset('assets/images/carousel-3.webp') }}" alt="Image 3"
-                    class="w-full h-full object-contain">
-            </div>
+            <!-- Navigation buttons (optional) -->
+            <div class="swiper-button-next text-green-500"></div>
+            <div class="swiper-button-prev text-green-500"></div>
         </div>
-
-        <!-- Carousel Controls -->
-        <button id="prev"
-            class="absolute top-1/2 left-0 transform -translate-y-1/2 p-4 hover:bg-black hover:text-white text-black rounded-full">
-            <i class="fa-solid fa-chevron-left"></i>
-        </button>
-        <button id="next"
-            class="absolute top-1/2 right-0 transform -translate-y-1/2 p-4 hover:bg-black hover:text-white text-black rounded-full">
-            <i class="fa-solid fa-chevron-right"></i>
-        </button>
     </div>
 
     @push('scripts')
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                const prevButton = document.getElementById('prev');
-                const nextButton = document.getElementById('next');
-                const carousel = document.getElementById('carousel');
-                let currentIndex = 0;
-                const slides = carousel.children;
-
-                // Function to show the next slide
-                function showNextSlide() {
-                    if (currentIndex < slides.length - 1) {
-                        currentIndex++;
-                    } else {
-                        currentIndex = 0; // Loop back to the first slide
-                    }
-                    updateCarouselPosition();
-                }
-
-                // Function to show the previous slide
-                function showPrevSlide() {
-                    if (currentIndex > 0) {
-                        currentIndex--;
-                    } else {
-                        currentIndex = slides.length - 1; // Loop back to the last slide
-                    }
-                    updateCarouselPosition();
-                }
-
-                // Update the position of the carousel
-                function updateCarouselPosition() {
-                    let offset = -currentIndex * 100; // Move the carousel based on the index
-                    carousel.style.transform = `translateX(${offset}%)`;
-                }
-
-                // Event listeners for buttons
-                nextButton.addEventListener('click', showNextSlide);
-                prevButton.addEventListener('click', showPrevSlide);
-
-                // Start the carousel
-                setInterval(showNextSlide, 3000);
+                const swiper = new Swiper('.swiper-container', {
+                    slidesPerView: 1, // Tampilkan satu slide per tampilan
+                    spaceBetween: 10, // Jarak antar slide
+                    loop: true, // Loop carousel
+                    autoplay: {
+                        delay: 3000, // Autoplay setiap 3 detik
+                        disableOnInteraction: false, // Menjaga autoplay meskipun pengguna berinteraksi
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true, // Memungkinkan untuk mengklik pagination
+                    },
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                });
             });
         </script>
     @endpush
+@endif
+

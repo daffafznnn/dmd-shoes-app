@@ -14,6 +14,10 @@
 
     <script src="https://kit.fontawesome.com/f3a53ecdc1.js" crossorigin="anonymous"></script>
 
+    <!-- CDN Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+
+
     @stack('styles')
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -30,6 +34,7 @@
     </main>
     <!-- Footer -->
     <x-guest.footer />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     @stack('scripts')
 </body>
 
