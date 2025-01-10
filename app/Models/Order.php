@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'orders';
 
     protected $fillable = [
@@ -22,9 +25,11 @@ class Order extends Model
         'total',
     ];
 
+    protected $dates = ['deleted_at']; // Kolom soft delete
+
     public function order_details()
     {
-        return $this->hasMany(OrderDetail::class, 'id', 'order_id');
+        return $this->hasMany(OrderDetail::class, 'order_id', 'id');
     }
 
     public function payment_methods()
@@ -35,5 +40,21 @@ class Order extends Model
     public function shipping_methods()
     {
         return $this->belongsTo(ShippingMethod::class, 'shipping_method_id', 'id');
+    }
+
+    /**
+     * Scope to retrieve only active orders (not soft deleted).
+     */
+    public function scopeActive($query)
+    {
+        return $query->whereNull('deleted_at');
+    }
+
+    /**
+     * Scope to retrieve only archived orders (soft deleted).
+     */
+    public function scopeArchived($query)
+    {
+        return $query->whereNotNull('deleted_at');
     }
 }

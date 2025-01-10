@@ -100,7 +100,7 @@
 
 
                 <!-- Order Management -->
-                <div x-data="{ isActive: {{ Request::is('admin/orders*') ? 'true' : 'false' }}, open: {{ Request::is('admin/orders*') ? 'true' : 'false' }} }">
+                <div x-data="{ isActive: {{ Request::is('admin/master/orders*') ? 'true' : 'false' }}, open: {{ Request::is('admin/master/orders*') ? 'true' : 'false' }} }">
                     <a href="#" @click="$event.preventDefault(); open = !open"
                         class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
                         :class="{ 'bg-primary-100 dark:bg-primary': isActive || open }" role="button" aria-haspopup="true"
@@ -117,9 +117,9 @@
                         </span>
                     </a>
                     <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
-                        <a href="#"
+                        <a href="{{ route('master.orders.index') }}"
                             class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Daftar Pesanan') }}</a>
-                        <a href="#"
+                        <a href="{{ route('master.orders.create') }}"
                             class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Tambah Pesanan') }}</a>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                 </div>
 
                 @if (Auth::user()->role == 'superadmin')
-                                    <!-- User Management -->
+                <!-- User Management -->
                 <a href="{{ route('admin.users.index') }}"
                     class="flex items-center p-2 text-gray-500 transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
                     :class="{ 'bg-primary-100 dark:bg-primary': {{ Request::is('admin/users') || Request::is('admin/users/*') ? 'true' : 'false' }} }"
