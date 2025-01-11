@@ -1,3 +1,4 @@
+@section('title', 'Home')
 <x-guest-layout>
     <!-- Start: Carousel -->
     <x-guest.carousel />

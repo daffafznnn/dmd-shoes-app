@@ -1,3 +1,4 @@
+@section('title', 'Detail Product' . $product->name)
 <x-guest-layout>
     <div class="px-5 mt-8 mb-8">
         <!-- Product Detail -->
@@ -138,8 +139,8 @@
         <div class="container px-5 mt-8 mb-8">
             <h2 class="text-2xl font-semibold text-gray-900">{{ __('Related Products') }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                @foreach ($relatedProducts as $product)
-                    @component('components.guest.card-product', ['product' => $product])
+                @foreach ($relatedProducts as $product_related)
+                    @component('components.guest.card-product', ['product' => $product_related])
                     @endcomponent
                 @endforeach
             </div>
@@ -158,6 +159,9 @@
         const sizes = @json($sizes);
         const variants = @json($productVariants);
         const productName = "{{ $product->name }}";
+        const productCategory = "{{ $product->categories->name }}";
+        const productType = "{{ $product->type }}";
+        const whatsappNumber = @json($whatsapp);
 
         let selectedMaterial = null;
         let selectedColor = null;
@@ -214,7 +218,7 @@
         // Update WhatsApp Link
         function updateWhatsAppLink() {
             const whatsappButton = document.getElementById('whatsapp-button');
-            const phoneNumber = '62895387417000'; // Ganti dengan nomor telepon yang diinginkan
+            const phoneNumber = whatsappNumber; // Ganti dengan nomor telepon yang diinginkan
 
             if (selectedVariant) {
                 const materialName = selectedVariant.product_materials ? selectedVariant.product_materials.name :
@@ -224,7 +228,7 @@
                     'Unknown Size';
 
                 const message =
-                    `Halo, saya tertarik dengan produk ${productName} (Material: ${materialName}, Warna: ${colorName}, Ukuran: ${sizeNumber}).`;
+                    `Halo, saya tertarik dengan produk ${productName}\nBahan: ${materialName}\nWarna: ${colorName}\nUkuran: ${sizeNumber}\nKategori: ${productCategory}\nTipe: ${productType}`;
 
                 // Membuat link WhatsApp dengan nomor telepon dan pesan
                 whatsappButton.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

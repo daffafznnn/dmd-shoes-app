@@ -72,6 +72,11 @@ class GuestController extends Controller
     }
     public function viewDetail($slug)
     {
+        // mengambil data setting
+        $setting = Setting::first();
+        $phone = explode('+', $setting->phone);
+        $whatsapp = $phone[1];
+
         // Mengambil produk berdasarkan slug
         $product = Product::with([
             'product_variants.product_variant_images', // Mengambil gambar variasi produk
@@ -102,7 +107,7 @@ class GuestController extends Controller
         ];
 
         // Kirim data ke view
-        return view('guest.product', compact('product', 'materials', 'colors', 'sizes', 'variants', 'relatedProducts', 'priceRange', 'productVariants'));
+        return view('guest.product', compact('product', 'materials', 'colors', 'sizes', 'variants', 'relatedProducts', 'priceRange', 'productVariants', 'whatsapp'));
     }
 
     public function allProducts(Request $request)

@@ -1,3 +1,4 @@
+@section('title', 'Products')
 <x-guest-layout>
     <!-- Start: Filter -->
     <section class="container mx-auto px-4 py-8">

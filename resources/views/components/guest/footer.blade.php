@@ -1,15 +1,10 @@
-@php
-    use App\Models\Setting;
-
-    $setting = Setting::first();
-@endphp
 <footer class="px-4 pt-12 pb-8 text-white bg-white border-t border-gray-200" id="about-us">
     <div class="container flex flex-col justify-between max-w-6xl px-4 mx-auto overflow-hidden lg:flex-row">
         <div class="w-full pl-12 mr-4 text-left lg:w-1/4 sm:text-center sm:pl-0 lg:text-left">
             <a href="/"
                 class="flex justify-start block text-left sm:text-center lg:text-left sm:justify-center lg:justify-start">
                 <span class="flex items-start sm:items-center">
-                    <img src="{{ asset('assets/images/dmd-logo.png') }}" alt="dmd-logo" class="w-20 h-16">
+                    <img src="{{ asset('storage/' . $setting->logo) }}" alt="dmd-logo" class="w-20 h-16">
                 </span>
             </a>
             <p class="mt-6 mr-4 text-base text-gray-500">{{ $setting->description }}</p>
