@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function   () {
             Route::put('/{id}', 'update')->name('update');
             Route::delete('/{id}', 'destroy')->name('destroy');
             Route::delete('/images/{id}', 'destroyImage')->name('destroyImage');
+            Route::delete('/variations/{id}', 'deleteVariantProduct')->name('deleteVariantProduct');
         });
 
         // Material routes

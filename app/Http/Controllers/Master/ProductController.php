@@ -158,9 +158,9 @@ class ProductController extends Controller
                 'variations.*.price' => 'required|numeric|min:0',
                 'variations.*.stock' => 'required|integer|min:0',
                 'variations.*.images' => 'nullable|array',
-                'variations.*.images.*' => 'nullable|image|max:5120',
+                'variations.*.images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
                 'product_images' => 'nullable|array',
-                'product_images.*' => 'nullable|image|max:5120',
+                'product_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
                 'cover' => 'nullable|image|max:5120',
             ]);
 
@@ -276,15 +276,15 @@ class ProductController extends Controller
                 'is_featured' => 'nullable|boolean',
                 'type' => 'nullable|string',
                 'variations' => 'nullable|array',
+                'variations.*.id' => 'nullable|exists:product_variants,id',
                 'variations.*.material_id' => 'required|exists:product_materials,id',
                 'variations.*.size_id' => 'required|exists:product_sizes,id',
                 'variations.*.color_id' => 'required|exists:product_colors,id',
                 'variations.*.price' => 'required|numeric|min:0',
                 'variations.*.stock' => 'required|integer|min:0',
-                'variations.*.images' => 'nullable|array',
-                'variations.*.images.*' => 'nullable|image|max:5120',
+                'variations.*.image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:5120',
                 'product_images' => 'nullable|array',
-                'product_images.*' => 'nullable|image|max:5120',
+                'product_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
                 'cover' => 'nullable|image|max:5120',
             ]);
 
@@ -292,68 +292,96 @@ class ProductController extends Controller
             $product = Product::findOrFail($id);
 
             // Perbarui data produk
-            $product->update($validated);
-
-            // Menangani perubahan variasi produk
-            if ($request->has('variations')) {
-                foreach ($request->variations as $key => $variation) {
-                    $productVariation = ProductVariant::find($variation['id']);
-                    if ($productVariation) {
-                        $productVariation->update([
-                            'material_id' => $variation['material_id'],
-                            'size_id' => $variation['size_id'],
-                            'color_id' => $variation['color_id'],
-                            'price' => $variation['price'],
-                        ]);
-
-                        // Menangani perubahan stok
-                        if (isset($variation['stock'])) {
-                            $productVariation->product_stocks()->update([
-                                'stock' => $variation['stock'],
-                            ]);
-                        }
-
-                        // Menangani perubahan gambar variasi produk
-                        if (isset($variation['image']) && $variation['image']->isValid()) {
-                            $imagePath = $variation['image']->store('product_variants', 'public');
-                            $productVariation->product_variant_images()->updateOrCreate(
-                                ['product_variant_id' => $productVariation->id],
-                                ['image' => $imagePath]
-                            );
-                        }
-                    }
-                }
-            }
+            $product->update([
+                'model_number' => $validated['model_number'] ?? $product->model_number,
+                'name' => $validated['name'],
+                'category_id' => $validated['category_id'],
+                'unit_id' => $validated['unit_id'],
+                'default_price' => $validated['default_price'] ?? $product->default_price,
+                'default_stock' => $validated['default_stock'] ?? $product->default_stock,
+                'status' => $validated['status'],
+                'meta_title' => $validated['meta_title'] ?? $product->meta_title,
+                'meta_keywords' => $validated['meta_keywords'] ?? $product->meta_keywords,
+                'meta_description' => $validated['meta_description'] ?? $product->meta_description,
+                'description' => $validated['description'] ?? $product->description,
+                'is_featured' => $validated['is_featured'] ?? $product->is_featured,
+                'type' => $validated['type'] ?? $product->type,
+            ]);
 
             // Menangani gambar utama produk
-            if ($request->hasFile('main_image')) {
-                $mainImagePath = $request->file('main_image')->store('products_images', 'public');
-                $product->product_images()->updateOrCreate(
-                    ['product_id' => $product->id, 'is_main' => true],
-                    ['image_path' => $mainImagePath]
-                );
+            if ($request->hasFile('cover')) {
+                // Hapus gambar cover lama jika ada
+                if ($product->cover) {
+                    Storage::disk('public')->delete($product->cover);
+                }
+                // Simpan gambar cover baru
+                $coverPath = $request->file('cover')->store('product_images', 'public');
+                $product->cover = $coverPath;
+                $product->save();
             }
 
             // Menangani galeri gambar produk
             if ($request->hasFile('product_images')) {
                 foreach ($request->file('product_images') as $image) {
                     $imagePath = $image->store('product_gallery', 'public');
-                    $product->product_images()->create([
+                    ProductImage::create([
+                        'product_id' => $product->id,
                         'image_path' => $imagePath,
                         'is_main' => false,
-                        'sort_order' => $product->product_images->count() + 1
                     ]);
                 }
             }
 
-            return redirect()->route('product.edit', $product->id)
-                ->with('success', 'Produk berhasil diperbarui.');
+            // Menangani variasi produk
+            if (isset($validated['variations'])) {
+                $existingVariantIds = $product->product_variants->pluck('id')->toArray();
+                foreach ($validated['variations'] as $variationData) {
+                    // Cek apakah ini adalah variasi baru atau update
+                    $variant = isset($variationData['id']) && in_array($variationData['id'], $existingVariantIds)
+                        ? ProductVariant::find($variationData['id'])
+                        : new ProductVariant();
+
+                    $variant->fill([
+                        'product_id' => $product->id,
+                        'material_id' => $variationData['material_id'],
+                        'size_id' => $variationData['size_id'],
+                        'color_id' => $variationData['color_id'],
+                        'price' => $variationData['price'],
+                    ]);
+
+                    $variant->save();
+
+                    // Remove processed variant ID from the list
+                    if (($key = array_search($variant->id, $existingVariantIds)) !== false) {
+                        unset($existingVariantIds[$key]);
+                    }
+
+                    // Update stock
+                    ProductStock::updateOrCreate(
+                        ['product_variant_id' => $variant->id],
+                        ['stock' => $variationData['stock']]
+                    );
+
+                    // Update atau tambahkan gambar
+                    if ($request->hasFile("variations.{$variationData['id']}.image")) {
+                        $imagePath = $request->file("variations.{$variationData['id']}.image")->store('product_variant_images', 'public');
+                        ProductVariantImage::updateOrCreate(
+                            ['product_variant_id' => $variant->id],
+                            ['image' => $imagePath]
+                        );
+                    }
+                }
+
+                // Remove variants that are not present in the updated list
+                ProductVariant::whereIn('id', $existingVariantIds)->delete();
+            }
+
+
+            return redirect()->route('master.products.index')->with('success', 'Produk berhasil diperbarui.');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-
 
     public function destroy($id)
     {
@@ -394,6 +422,25 @@ class ProductController extends Controller
             return redirect()->route('master.products.index')->with('success', 'Produk berhasil dihapus.');
         } catch (\Exception $e) {
             return redirect()->route('master.products.index')->with('error', 'Gagal menghapus produk: ' . $e->getMessage());
+        }
+    }
+
+    public function deleteVariantProduct($id)
+    {
+        try {
+            $variant = ProductVariant::findOrFail($id);
+            
+            // Delete associated product variant image
+            if ($variant->product_variant_images()->exists()) {
+                $image = $variant->product_variant_images->first();
+                Storage::disk('public')->delete($image->image);
+                $image->delete();
+            }
+
+            $variant->delete();
+            return response()->json(['success' => true, 'message' => 'Variasi produk dan gambarnya berhasil dihapus.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Gagal menghapus variasi produk: ' . $e->getMessage()], 400);
         }
     }
 }
