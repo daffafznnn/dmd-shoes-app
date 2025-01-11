@@ -30,8 +30,8 @@ class GuestController extends Controller
         if ($request->filled('keyword')) {
             $featuredQuery->where(function ($q) use ($request) {
                 $q->where('name', 'LIKE', '%' . $request->keyword . '%')
-                ->orWhere('type', 'LIKE', '%' . $request->keyword . '%')
-                ->orWhere('description', 'LIKE', '%' . $request->keyword . '%');
+                    ->orWhere('type', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('description', 'LIKE', '%' . $request->keyword . '%');
             });
         }
 
@@ -49,7 +49,7 @@ class GuestController extends Controller
 
         // Ambil produk unggulan dengan pagination
         $featuredProducts = $featuredQuery->paginate(20);
-        
+
         // Loading selesai untuk produk unggulan
         $isLoading = false;
 
@@ -106,4 +106,38 @@ class GuestController extends Controller
         return view('guest.product', compact('product', 'materials', 'colors', 'sizes', 'variants', 'relatedProducts', 'priceRange', 'productVariants'));
     }
 
+    public function allProducts(Request $request)
+    {
+        $products = Product::where('status', 1);
+
+        if ($request->filled('search')) {
+            $products->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('type', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('description', 'LIKE', '%' . $request->keyword . '%');
+            });
+        }
+
+        if ($request->filled('category')) {
+            $products->where('category_id', $request->category);
+        }
+
+        if ($request->filled('material')) {
+            $products->whereHas('product_variants', function ($q) use ($request) {
+                $q->where('material_id', $request->material);
+            });
+        }
+
+        if ($request->filled('keyword')) {
+            $products->where('type', $request->keyword);
+        }
+
+        if ($request->filled('is_featured')) {
+            $products->where('is_featured', $request->is_featured);
+        }
+
+        $all_products = $products->paginate(1);
+
+        return view('guest.all-products', compact('all_products'));
+    }
 }

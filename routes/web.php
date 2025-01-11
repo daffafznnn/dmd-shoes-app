@@ -31,13 +31,14 @@ Route::group(
 
         Route::middleware('guest')->controller(GuestController::class)->group(function () {
             Route::get('/', 'index')->name('guest.index');
+            Route::get('/product/all', 'allProducts')->name('product.all');
             Route::get('/product/detail/{slug}', 'viewDetail')->name('product.detail');
         });
     }
 );
 
 
-Route::middleware('auth')->group(function   () {
+Route::middleware('auth')->group(function () {
 
     // admin and superadmin routes group
     Route::middleware('checkRole:admin,superadmin')->group(function () {
