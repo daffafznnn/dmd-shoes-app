@@ -118,9 +118,13 @@
                     </a>
                     <div role="menu" x-show="open" class="mt-2 space-y-2 px-7">
                         <a href="{{ route('master.orders.index') }}"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Daftar Pesanan') }}</a>
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/orders') ? 'true' : 'false' }} }"
+                            >{{ __('Daftar Pesanan') }}</a>
                         <a href="{{ route('master.orders.create') }}"
-                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">{{ __('Tambah Pesanan') }}</a>
+                            class="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
+                            :class="{ 'text-primary-100 dark:text-primary': {{ Request::is('admin/master/orders/create') ? 'true' : 'false' }} }"
+                            >{{ __('Tambah Pesanan') }}</a>
                     </div>
                 </div>
 

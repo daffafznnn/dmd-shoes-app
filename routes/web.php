@@ -116,8 +116,9 @@ Route::middleware('auth')->group(function   () {
             Route::delete('/{id}', 'destroy')->name('destroy');
             Route::put('/{id}', 'update')->name('update');
             Route::delete('/{id}', 'destroy')->name('destroy');
-            Route::get('/restore/{id}', 'restore')->name('restore');
+            Route::patch('/restore/{id}', 'restore')->name('restore');
             Route::get('/variant/{product_id}', 'getVariants')->name('getVariants');
+            Route::delete('/product/{orderDetailId}', 'deleteProductInOrder')->name('deleteProductInOrder');
         });
 
         // Banner routes
