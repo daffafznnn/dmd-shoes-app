@@ -13,6 +13,12 @@
                 <label for="is_featured" class="tracking-wide font-semibold">{{ __('Featured Products') }}</label>
             </div>
         </div>
+        @if (request()->has('search'))
+            <div class="py-3">
+                <h2 class="text-xl font-semibold tracking-wider">Hasil pencarian untuk '{{ request()->get('search') }}'
+                </h2>
+            </div>
+        @endif
         @if ($all_products->isNotEmpty())
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 @forelse ($all_products as $product)
