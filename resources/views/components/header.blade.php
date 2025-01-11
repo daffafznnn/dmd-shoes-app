@@ -1,3 +1,6 @@
+         @php
+             $settings = \App\Models\Setting::first();
+         @endphp
          @auth
              <header class="relative bg-white dark:bg-darker">
                  <div class="flex items-center justify-between p-2 border-b dark:border-primary-darker">
@@ -15,9 +18,9 @@
                      </button>
 
                      <!-- Brand -->
-                     <a href="index.html"
+                     <a href="{{ route('admin.dashboard') }}"
                          class="inline-block text-2xl font-bold tracking-wider uppercase text-primary-dark dark:text-light">
-                         DMD-SHOES
+                         {{ $settings->name }} 
                      </a>
 
                      <!-- Mobile sub menu button -->
@@ -59,7 +62,7 @@
                              </div>
                          </button>
 
-                         <!-- Notification button -->
+                         {{-- <!-- Notification button -->
                          <button @click="openNotificationsPanel"
                              class="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker">
                              <span class="sr-only">Open Notification panel</span>
@@ -79,7 +82,7 @@
                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                              </svg>
-                         </button>
+                         </button> --}}
 
                          <!-- Settings button -->
                          <button @click="openSettingsPanel"
@@ -170,7 +173,7 @@
                                  </div>
                              </button>
 
-                             <!-- Notification button -->
+                             {{-- <!-- Notification button -->
                              <button @click="openNotificationsPanel(); $nextTick(() => { isMobileSubMenuOpen = false })"
                                  class="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker">
                                  <span class="sr-only">Open notifications panel</span>
@@ -191,7 +194,7 @@
                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                  </svg>
-                             </button>
+                             </button> --}}
 
                              <!-- Settings button -->
                              <button @click="openSettingsPanel(); $nextTick(() => { isMobileSubMenuOpen = false })"
@@ -238,10 +241,13 @@
                                      class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary">
                                      Settings
                                  </a>
-                                 <a href="#" role="menuitem"
+                                  <form action="{{ route('logout') }}" method="POST"
                                      class="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary">
-                                     Logout
-                                 </a>
+                                     @csrf
+                                     <button type="submit" role="menuitem" class="w-full text-left">
+                                         {{ __('Logout') }}
+                                     </button>
+                                 </form>
                              </div>
                          </div>
                      </nav>

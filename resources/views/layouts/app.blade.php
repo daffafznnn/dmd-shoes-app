@@ -1,3 +1,6 @@
+@php
+    $settings = \App\Models\Setting::first();
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -6,7 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <meta property="og:title" content="{{ $settings->name ?? config('app.name', 'Laravel') }}" />
+    <meta property="og:description" content="{{ $settings->description ?? '' }}" />
+    <meta property="og:image" content="{{ asset('storage/' . $settings->logo ?? '') }}" />
+    <meta property="og:url" content="{{ url('/') }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ $settings->name ?? config('app.name', 'Laravel') }}" />
+    <meta name="twitter:description" content="{{ $settings->description ?? '' }}" />
+    <meta name="twitter:image" content="{{ asset('storage/' . $settings->logo ?? '') }}" />
+
+    <link rel="shortcut icon" href="{{ asset('storage/' . $settings->favicon ?? '') }}" type="image/x-icon">
+
+    <title>{{ $settings->name ?? config('app.name', 'Laravel') }}</title>
 
     <link rel="stylesheet" href="{{ asset('css/tailwind.css') }}">
     <!-- Fonts -->
@@ -21,30 +35,35 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div x-data="setup()" x-init="$refs.loading.classList.add('hidden');
-    setColors(color);" :class="{ 'dark': isDark }">
-        <div class="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
-            <x-loading-screen ref="loading" />
-            <!-- Sidebar -->
-            <x-sidebar />
 
-            <div class="flex-1 h-full overflow-x-hidden overflow-y-auto">
-                <!-- Page Heading -->
-                <x-header />
+    @if(!$settings->is_maintenance)
+        <div x-data="setup()" x-init="$refs.loading.classList.add('hidden');
+        setColors(color);" :class="{ 'dark': isDark }">
+            <div class="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
+                <x-loading-screen ref="loading" />
+                <!-- Sidebar -->
+                <x-sidebar />
 
-                <!-- Page Content -->
-                <main>
-                    {{ $slot }}
-                </main>
-                <!-- Main footer -->
-                {{-- <x-footer /> --}}
+                <div class="flex-1 h-full overflow-x-hidden overflow-y-auto">
+                    <!-- Page Heading -->
+                    <x-header />
+
+                    <!-- Page Content -->
+                    <main>
+                        {{ $slot }}
+                    </main>
+                    <!-- Main footer -->
+                    {{-- <x-footer /> --}}
+                </div>
+                <!-- Panels -->
+                <x-settings-panel />
+                <x-notification-panel />
+                <x-search-panel />
             </div>
-            <!-- Panels -->
-            <x-settings-panel />
-            <x-notification-panel />
-            <x-search-panel />
         </div>
-    </div>
+    @else
+        <x-maintenance />
+    @endif
     @stack('scripts')
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>
@@ -185,3 +204,4 @@
 </body>
 
 </html>
+

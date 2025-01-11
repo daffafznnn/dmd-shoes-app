@@ -55,7 +55,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         // Mengarahkan kembali ke halaman utama
-        return redirect('/');
+        return redirect('/login');
     }
 }
 

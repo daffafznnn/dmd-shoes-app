@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\Product;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -12,54 +16,53 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('admin.dashboard');
-    }
+        // Data untuk cards
+        $totalUsers = User::count();
+        $totalOrders = Order::count();
+        $totalValue = Order::sum('total');
+        $totalProducts = Product::count();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        // Data untuk Bar Chart (Pendapatan Bulanan)
+        $barChartData = [
+            'labels' => [],
+            'data' => [],
+            'backgroundColor' => 'rgba(75, 192, 192, 0.2)',
+            'borderColor' => 'rgba(75, 192, 192, 1)',
+            'label' => 'Pendapatan Bulanan',
+        ];
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $startOfYear = Carbon::now()->startOfYear();
+        $endOfYear = Carbon::now()->endOfYear();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        // Loop setiap bulan dalam tahun ini
+        foreach (range(1, 12) as $month) {
+            $startOfMonth = Carbon::createFromDate(null, $month, 1)->startOfMonth();
+            $endOfMonth = Carbon::createFromDate(null, $month, 1)->endOfMonth();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+            $monthlyRevenue = Order::whereBetween('created_at', [$startOfMonth, $endOfMonth])->sum('total');
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+            $barChartData['labels'][] = $startOfMonth->format('F'); // Nama bulan
+            $barChartData['data'][] = $monthlyRevenue; // Pendapatan bulan tersebut
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Data untuk Doughnut Chart
+        $doughnutChartData = [
+            'labels' => ['Pendapatan', 'Pesanan', 'Produk'],
+            'data' => [$totalValue, $totalOrders, $totalProducts],
+            'backgroundColor' => [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)'
+            ],
+            'borderColor' => [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            'label' => 'Distribusi Statistik',
+        ];
+
+        // Kirim data ke view
+        return view('admin.dashboard', compact('totalUsers', 'totalOrders', 'totalValue', 'totalProducts', 'barChartData', 'doughnutChartData'));
     }
 }
