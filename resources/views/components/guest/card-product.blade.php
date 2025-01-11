@@ -8,13 +8,6 @@
          style="transition-delay: {{ $index * 1000 }}ms;" 
         alt="product image" />
     @endforeach
-    <div class="absolute right-0 bottom-0 mr-2 mb-4 space-y-2 md:absolute md:-right-16 md:bottom-0 md:mr-2 md:mb-4 md:transition-all md:duration-300 md:xl:group-hover:right-0">
-      <button class="flex h-10 w-10 items-center justify-center bg-green-500 text-white transition hover:bg-green-700">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-        </svg>
-      </button>
-    </div>
   </div>
   <div class="mt-4 px-5 pb-5">
       <h5 class="text-xl tracking-tight text-slate-900">{{ $product->name }}</h5>

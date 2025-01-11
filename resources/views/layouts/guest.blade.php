@@ -26,8 +26,12 @@
 <body class="font-sans text-gray-900 bg-gray-100 antialiased">
     <!-- Header -->
     <x-guest.header />
-    <!-- New Navigation Below Header -->
-    <x-guest.navbar />
+
+    @if (Route::currentRouteName() === 'guest.index' || Route::currentRouteName() === 'product.all')
+        <!-- New Navigation Below Header -->
+        <x-guest.navbar />
+    @endif
+
     <!-- Page Content -->
     <main>
         {{ $slot }}

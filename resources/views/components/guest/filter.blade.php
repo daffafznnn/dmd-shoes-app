@@ -8,7 +8,7 @@
                 <div class="mb-4">
                     <label for="category" class="block text-sm font-medium text-gray-700">{{ __('Category') }}</label>
                     <select id="category" x-model="category" @change="submitFilter"
-                        class="select select-bordered w-full bg-white dark:bg-darker">
+                        class="select select-bordered w-full bg-white dark:bg-darker mt-2">
                         <option value="">{{ __('Select Category') }}</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -20,7 +20,7 @@
                 <div class="mb-4">
                     <label for="type" class="block text-sm font-medium text-gray-700">{{ __('Type') }}</label>
                     <select id="type" x-model="type" @change="submitFilter"
-                        class="select select-bordered w-full bg-white dark:bg-darker">
+                        class="select select-bordered w-full bg-white dark:bg-darker mt-2">
                         <option value="">{{ __('Select Type') }}</option>
                         @foreach ($types as $type)
                             <option value="{{ $type }}">{{ ucfirst($type) }}</option>
@@ -32,7 +32,7 @@
                 <div class="mb-4">
                     <label for="material" class="block text-sm font-medium text-gray-700">{{ __('Material') }}</label>
                     <select id="material" x-model="material" @change="submitFilter"
-                        class="select select-bordered w-full bg-white dark:bg-darker">
+                        class="select select-bordered w-full bg-white dark:bg-darker mt-2">
                         <option value="">{{ __('Select Material') }}</option>
                         @foreach ($materials as $material)
                             <option value="{{ $material->id }}">{{ $material->name }}</option>

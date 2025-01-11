@@ -89,10 +89,9 @@ class GuestController extends Controller
         // Jika kategori produk ada, ambil produk terkait berdasarkan kategori
         $relatedProducts = [];
         if ($product->categories) {
-            $relatedProducts = Product::where('is_featured', 1)
-                ->where('id', '!=', $product->id)
+            $relatedProducts = Product::where('id', '!=', $product->id)
                 ->where('category_id', $product->categories->id)
-                ->limit(8)
+                ->limit(6)
                 ->get();
         }
         $productVariants = $product->product_variants()->with(['product_materials', 'product_colors', 'product_sizes', 'product_variant_images'])->get();
@@ -136,7 +135,7 @@ class GuestController extends Controller
             $products->where('is_featured', $request->is_featured);
         }
 
-        $all_products = $products->paginate(1);
+        $all_products = $products->paginate(15);
 
         return view('guest.all-products', compact('all_products'));
     }

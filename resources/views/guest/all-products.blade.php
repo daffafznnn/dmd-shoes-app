@@ -10,7 +10,7 @@
             <h2 class="text-3xl font-semibold mb-4">{{ __('All Products') }}</h2>
             <div class="flex items-center mb-4">
                 <input type="checkbox" name="is_featured" id="is_featured" class="mr-2">
-                <label for="is_featured" class="tracking-wide font-semibold">Featured Products</label>
+                <label for="is_featured" class="tracking-wide font-semibold">{{ __('Featured Products') }}</label>
             </div>
         </div>
         @if ($all_products->isNotEmpty())
