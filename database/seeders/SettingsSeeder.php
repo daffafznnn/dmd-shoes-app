@@ -40,7 +40,6 @@ class SettingsSeeder extends Seeder
 
         foreach ($socialSettings as $social) {
             SocialSetting::create([
-                'setting_id' => $setting->id,
                 'name' => $social['name'],
                 'icon' => $social['icon'],
                 'url' => $social['url'],
@@ -48,11 +47,11 @@ class SettingsSeeder extends Seeder
         }
 
         // Menambahkan pengaturan API
-        ApiSetting::create([
-            'setting_id' => $setting->id,
-            'api_name' => 'Payment Gateway',
-            'api_key' => 'your-api-key',
-            'api_secret' => 'your-api-secret',
-        ]);
+        // ApiSetting::create([
+        //     'setting_id' => $setting->id,
+        //     'api_name' => 'Payment Gateway',
+        //     'api_key' => 'your-api-key',
+        //     'api_secret' => 'your-api-secret',
+        // ]);
     }
 }

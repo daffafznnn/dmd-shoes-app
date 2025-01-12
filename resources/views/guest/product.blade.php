@@ -1,5 +1,6 @@
+@section('title', 'Detail Product' . $product->name)
 <x-guest-layout>
-    <div class="container px-5 mt-8 mb-8">
+    <div class="px-5 mt-8 mb-8">
         <!-- Product Detail -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white py-4 p-5 mb-8 pb-8">
             <!-- Product Image -->
@@ -26,7 +27,8 @@
             <div class="flex flex-col justify-between">
                 <h1 class="text-3xl font-semibold text-gray-900">{{ $product->name }}
                     @if ($product->is_featured)
-                        <span class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800 ml-2">{{ __('Featured') }}</span>
+                        <span
+                            class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800 ml-2">{{ __('Featured') }}</span>
                     @endif
                 </h1>
                 <p id="price" class="text-xl font-bold text-gray-900 mt-4">Rp
@@ -36,7 +38,7 @@
                 <!-- Variations -->
                 <div class="mt-4">
                     <div id="material-section">
-                        <span class="font-semibold">Material:</span>
+                        <span class="font-semibold">{{ __('Material') }}:</span>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2">
                             @foreach ($product->product_variants->pluck('material_id')->unique() as $materialId)
                                 @php
@@ -59,7 +61,7 @@
                     </div>
 
                     <div id="color-section" class="mt-4">
-                        <span class="font-semibold">Color:</span>
+                        <span class="font-semibold">{{ __('Color') }}:</span>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2">
                             @foreach ($product->product_variants->pluck('color_id')->unique() as $colorId)
                                 @php
@@ -81,7 +83,7 @@
                     </div>
 
                     <div id="size-section" class="mt-4">
-                        <span class="font-semibold">Size:</span>
+                        <span class="font-semibold">{{ __('Size') }}:</span>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2">
                             @foreach ($product->product_variants->pluck('size_id')->unique() as $sizeId)
                                 @php
@@ -107,40 +109,49 @@
                 <div class="mt-6">
                     <a id="whatsapp-button" href="#" target="_blank"
                         class="px-4 py-3 bg-green-500 text-white font-medium rounded-lg shadow-md hover:bg-green-600 transition duration-200 disabled:opacity-50 disabled:pointer-events-none">
-                        Chat on WhatsApp
+                        {{ __('Chat on WhatsApp') }}
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-        <!-- Product Specifications -->
-    <div class="container px-5 mt-8">
+    <!-- Product Specifications -->
+    <div class="px-5 mt-8">
         <div class="bg-white py-4 p-5 mb-8 pb-8">
             <h2 class="text-2xl font-semibold text-gray-900">{{ __('Product specifications') }}</h2>
-            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Stock:') }}</span> {{ $product->default_stock ?? 0 }}</p>
-            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Category:') }}</span> {{ $product->categories->name ?? '-' }}</p>
-            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Type:') }}</span> {{ $product->type ?? '-' }}</p>
-            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Units:') }}</span> {{ $product->units->name ?? '-' }} ({{ $product->units->acronym ?? '-' }})</p>
+            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Stock') }}:</span>
+                {{ $product->default_stock ?? 0 }}</p>
+            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Category') }}:</span>
+                {{ $product->categories->name ?? '-' }}</p>
+            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Type') }}:</span>
+                {{ $product->type ?? '-' }}</p>
+            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Units') }}:</span>
+                {{ $product->units->name ?? '-' }} ({{ $product->units->acronym ?? '-' }})</p>
             <h2 class="text-2xl font-semibold text-gray-900 mt-4">{{ __('Product Description') }}</h2>
             <p class="text-gray-600 mt-2">{{ $product->description ?? '-' }}</p>
         </div>
     </div>
     <!-- End: Product Specifications -->
 
-    {{-- <!-- Related Products -->
-    @if(isset($relatedProducts) && count($relatedProducts) > 0)
+    <!-- Related Products -->
+    @if (isset($relatedProducts) && count($relatedProducts) > 0)
         <div class="container px-5 mt-8 mb-8">
             <h2 class="text-2xl font-semibold text-gray-900">{{ __('Related Products') }}</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-                @foreach ($relatedProducts as $product)
-                @component('components.guest.card-product', ['product' => $product])
-                @endcomponent
+                @foreach ($relatedProducts as $product_related)
+                    @component('components.guest.card-product', ['product' => $product_related])
+                    @endcomponent
                 @endforeach
             </div>
         </div>
+        <div class="text-center my-4 md:my-7">
+            <a href="{{ Route('product.all', ['category' => $relatedProducts[0]->categories->id]) }}"
+                class="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-md">{{ __('See More Related Products') }}<i
+                    class="fa-solid fa-circle-chevron-right ml-3"></i></a>
+        </div>
     @endif
-    <!-- End: Related Products --> --}}
+    <!-- End: Related Products -->
 
     <script>
         const materials = @json($materials);
@@ -148,6 +159,9 @@
         const sizes = @json($sizes);
         const variants = @json($productVariants);
         const productName = "{{ $product->name }}";
+        const productCategory = "{{ $product->categories->name }}";
+        const productType = "{{ $product->type }}";
+        const whatsappNumber = @json($whatsapp);
 
         let selectedMaterial = null;
         let selectedColor = null;
@@ -202,9 +216,9 @@
 
 
         // Update WhatsApp Link
-       function updateWhatsAppLink() {
+        function updateWhatsAppLink() {
             const whatsappButton = document.getElementById('whatsapp-button');
-            const phoneNumber = '62895387417000'; // Ganti dengan nomor telepon yang diinginkan
+            const phoneNumber = whatsappNumber; // Ganti dengan nomor telepon yang diinginkan
 
             if (selectedVariant) {
                 const materialName = selectedVariant.product_materials ? selectedVariant.product_materials.name :
@@ -214,7 +228,7 @@
                     'Unknown Size';
 
                 const message =
-                    `Halo, saya tertarik dengan produk ${productName} (Material: ${materialName}, Warna: ${colorName}, Ukuran: ${sizeNumber}).`;
+                    `Halo, saya tertarik dengan produk ${productName}\nBahan: ${materialName}\nWarna: ${colorName}\nUkuran: ${sizeNumber}\nKategori: ${productCategory}\nTipe: ${productType}`;
 
                 // Membuat link WhatsApp dengan nomor telepon dan pesan
                 whatsappButton.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
@@ -269,4 +283,3 @@
         updatePriceRange();
     </script>
 </x-guest-layout>
-

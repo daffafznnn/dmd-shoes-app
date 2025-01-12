@@ -30,8 +30,8 @@ class GuestController extends Controller
         if ($request->filled('keyword')) {
             $featuredQuery->where(function ($q) use ($request) {
                 $q->where('name', 'LIKE', '%' . $request->keyword . '%')
-                ->orWhere('type', 'LIKE', '%' . $request->keyword . '%')
-                ->orWhere('description', 'LIKE', '%' . $request->keyword . '%');
+                    ->orWhere('type', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('description', 'LIKE', '%' . $request->keyword . '%');
             });
         }
 
@@ -49,7 +49,7 @@ class GuestController extends Controller
 
         // Ambil produk unggulan dengan pagination
         $featuredProducts = $featuredQuery->paginate(20);
-        
+
         // Loading selesai untuk produk unggulan
         $isLoading = false;
 
@@ -72,6 +72,11 @@ class GuestController extends Controller
     }
     public function viewDetail($slug)
     {
+        // mengambil data setting
+        $setting = Setting::first();
+        $phone = explode('+', $setting->phone);
+        $whatsapp = $phone[1];
+
         // Mengambil produk berdasarkan slug
         $product = Product::with([
             'product_variants.product_variant_images', // Mengambil gambar variasi produk
@@ -89,10 +94,9 @@ class GuestController extends Controller
         // Jika kategori produk ada, ambil produk terkait berdasarkan kategori
         $relatedProducts = [];
         if ($product->categories) {
-            $relatedProducts = Product::where('is_featured', 1)
-                ->where('id', '!=', $product->id)
+            $relatedProducts = Product::where('id', '!=', $product->id)
                 ->where('category_id', $product->categories->id)
-                ->limit(8)
+                ->limit(6)
                 ->get();
         }
         $productVariants = $product->product_variants()->with(['product_materials', 'product_colors', 'product_sizes', 'product_variant_images'])->get();
@@ -103,7 +107,41 @@ class GuestController extends Controller
         ];
 
         // Kirim data ke view
-        return view('guest.product', compact('product', 'materials', 'colors', 'sizes', 'variants', 'relatedProducts', 'priceRange', 'productVariants'));
+        return view('guest.product', compact('product', 'materials', 'colors', 'sizes', 'variants', 'relatedProducts', 'priceRange', 'productVariants', 'whatsapp'));
     }
 
+    public function allProducts(Request $request)
+    {
+        $products = Product::where('status', 1);
+
+        if ($request->filled('search')) {
+            $products->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('type', 'LIKE', '%' . $request->keyword . '%')
+                    ->orWhere('description', 'LIKE', '%' . $request->keyword . '%');
+            });
+        }
+
+        if ($request->filled('category')) {
+            $products->where('category_id', $request->category);
+        }
+
+        if ($request->filled('material')) {
+            $products->whereHas('product_variants', function ($q) use ($request) {
+                $q->where('material_id', $request->material);
+            });
+        }
+
+        if ($request->filled('keyword')) {
+            $products->where('type', $request->keyword);
+        }
+
+        if ($request->filled('is_featured')) {
+            $products->where('is_featured', $request->is_featured);
+        }
+
+        $all_products = $products->paginate(15);
+
+        return view('guest.all-products', compact('all_products'));
+    }
 }
