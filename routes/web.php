@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{slug}/edit', 'edit')->name('edit');
             Route::put('/{id}', 'update')->name('update');
             Route::delete('/{id}', 'destroy')->name('destroy');
-            Route::delete('/images/{id}', 'destroyImage')->name('destroyImage');
+            Route::delete('/images/{id}', 'deleteProductImage')->name('deleteProductImage');
             Route::delete('/variations/{id}', 'deleteVariantProduct')->name('deleteVariantProduct');
         });
 

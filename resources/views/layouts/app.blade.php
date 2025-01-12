@@ -35,8 +35,6 @@
 </head>
 
 <body class="font-sans antialiased">
-
-    @if(!$settings->is_maintenance)
         <div x-data="setup()" x-init="$refs.loading.classList.add('hidden');
         setColors(color);" :class="{ 'dark': isDark }">
             <div class="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
@@ -61,9 +59,6 @@
                 <x-search-panel />
             </div>
         </div>
-    @else
-        <x-maintenance />
-    @endif
     @stack('scripts')
     <script src="{{ asset('js/script.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.bundle.min.js"></script>

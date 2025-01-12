@@ -146,10 +146,10 @@
                                     <option value="unisex"
                                         {{ old('type', $product->type) == 'unisex' ? 'selected' : '' }}>
                                         {{ __('Unisex') }}</option>
-                                    <option value="pria"
+                                    <option value="man"
                                         {{ old('type', $product->type) == 'pria' ? 'selected' : '' }}>
                                         {{ __('Pria') }}</option>
-                                    <option value="wanita"
+                                    <option value="woman"
                                         {{ old('type', $product->type) == 'wanita' ? 'selected' : '' }}>
                                         {{ __('Wanita') }}</option>
                                 </select>
@@ -243,7 +243,7 @@
                                         <img src="{{ asset('storage/' . $image->image_path) }}"
                                             class="w-24 h-24 object-cover rounded-lg border shadow-sm" />
                                         <button type="button" class="absolute top-0 right-0 text-red-500"
-                                            onclick="removeImage({{ $image->id }})">&times;</button>
+                                            onclick="deleteProductImage({{ $image->id }})">&times;</button>
                                         <input type="hidden" name="removed_images[]" value="{{ $image->id }}"
                                             id="removed_image_{{ $image->id }}" />
                                     </div>
@@ -262,8 +262,8 @@
                         <h3 class="text-lg font-medium text-gray-800 dark:text-gray-300">{{ __('Variasi Produk') }}
                         </h3>
                         <div id="variations-container" class="space-y-6 mt-4">
-                            @if ($product->product_variants && $product->product_variants->count() > 0)
-                                @foreach ($product->product_variants as $index => $variation)
+                            @if (old('variations') || ($product->product_variants && $product->product_variants->count() > 0))
+                                @foreach (old('variations', $product->product_variants) as $index => $variation)
                                     <div
                                         class="flex flex-wrap space-x-6 p-4 border rounded-lg bg-gray-50 dark:bg-darker shadow-sm">
                                         <!-- Bahan -->
@@ -290,8 +290,7 @@
                                                 @foreach ($sizes as $size)
                                                     <option value="{{ $size->id }}"
                                                         {{ $size->id == $variation->size_id ? 'selected' : '' }}>
-                                                        {{ $size->size_number }} - {{ $size->size_chart }}
-                                                    </option>
+                                                        {{ $size->size_number }} - {{ $size->size_chart }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -314,7 +313,7 @@
                                             <label for="variations[{{ $index }}][price]"
                                                 class="block text-sm font-medium text-gray-800 dark:text-gray-300">Harga</label>
                                             <input type="number" name="variations[{{ $index }}][price]"
-                                                value="{{ $variation->price }}" required
+                                                value="{{ $variation->price ?? '' }}" required
                                                 class="input input-bordered w-full bg-white dark:bg-darker">
                                         </div>
                                         <!-- Stok -->
@@ -322,26 +321,39 @@
                                             <label for="variations[{{ $index }}][stock]"
                                                 class="block text-sm font-medium text-gray-800 dark:text-gray-300">Stok</label>
                                             <input type="number" name="variations[{{ $index }}][stock]"
-                                                value="{{ $variation->product_stocks->count() > 0 ? $variation->product_stocks[0]->stock : 0 }}"
+                                                value="{{ $variation->product_stocks->count() > 0 ? $variation->product_stocks[0]->stock : '' }}"
                                                 required class="input input-bordered w-full bg-white dark:bg-darker">
                                         </div>
+
                                         <!-- Gambar -->
                                         <div class="flex-1">
                                             <label for="variations[{{ $index }}][image]"
                                                 class="block text-sm font-medium text-gray-800 dark:text-gray-300">Gambar</label>
                                             <input type="file" name="variations[{{ $index }}][image]"
-                                                accept="image/*" class="file-input">
-                                            @if ($variation->product_variant_images->count() > 0)
-                                                <div class="mt-2">
-                                                    <img src="{{ asset('storage/' . $variation->product_variant_images[0]->image) }}"
-                                                        class="w-24 h-24 object-cover rounded-lg border shadow-sm">
-                                                </div>
-                                            @endif
+                                                accept="image/*" class="file-input file-input-xs">
+                                            <div id="variation-preview-{{ $index }}" class="mt-2">
+                                                @if ($variation->product_variant_images->count() > 0)
+                                                    @foreach ($variation->product_variant_images as $image)
+                                                        <div class="relative">
+                                                            <img src="{{ asset('storage/' . $image->image) }}"
+                                                                class="w-24 h-24 object-cover rounded-lg border shadow-sm">
+                                                            <button type="button"
+                                                                class="absolute top-0 right-0 text-red-500"
+                                                                onclick="removeImage({{ $image->id }}, {{ $index }})">&times;</button>
+                                                            <input type="hidden"
+                                                                name="variations[{{ $index }}][existing_images][]"
+                                                                value="{{ $image->id }}">
+                                                        </div>
+                                                    @endforeach
+                                                @endif
+                                            </div>
                                         </div>
                                         <!-- Button Hapus -->
                                         <div class="flex-1">
+                                            <input type="hidden" name="variations[{{ $index }}][delete]"
+                                                value="0" class="delete-flag">
                                             <button type="button" class="btn btn-danger mt-4"
-                                                onclick="deleteVariantProduct({{ $variation->id }})">
+                                                onclick="deleteVariantProduct({{ $variation->id ?? '' }})">
                                                 {{ __('Hapus') }}
                                             </button>
                                         </div>
@@ -367,10 +379,10 @@
             </div>
         </div>
     </div>
-     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            let variationCount = 0; // Menghitung variasi baru yang ditambahkan
+            let variationCount = document.querySelectorAll("#variations-container > div").length;
 
             document.getElementById("add-variation").addEventListener("click", () => {
                 const materials = @json($materials);
@@ -383,73 +395,75 @@
                     "bg-gray-50", "dark:bg-darker", "shadow-sm");
 
                 newVariation.innerHTML = `
-        <div class="flex-1">
-            <label for="variations[${variationCount}][material]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Bahan</label>
-            <select name="variations[${variationCount}][material_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
-                <option value="">{{ __('Pilih Bahan') }}</option>
-                ${materials.map(material => `<option value="${material.id}">${material.name}</option>`).join('')}
-            </select>
-        </div>
-        <div class="flex-1">
-            <label for="variations[${variationCount}][size]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Ukuran</label>
-            <select name="variations[${variationCount}][size_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
-                <option value="">{{ __('Pilih Ukuran') }}</option>
-                ${sizes.map(size => `<option value="${size.id}">${size.size_number} - ${size.size_chart}</option>`).join('')}
-            </select>
-        </div>
-        <div class="flex-1">
-            <label for="variations[${variationCount}][color]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Warna</label>
-            <select name="variations[${variationCount}][color_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
-                <option value="">{{ __('Pilih Warna') }}</option>
-                ${colors.map(color => `<option value="${color.id}">${color.name}</option>`).join('')}
-            </select>
-        </div>
-        <div class="flex-1">
-            <label for="variations[${variationCount}][price]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Harga</label>
-            <input type="number" name="variations[${variationCount}][price]" required class="input input-bordered w-full bg-white dark:bg-darker">
-        </div>
-        <div class="flex-1">
-            <label for="variations[${variationCount}][stock]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Stok</label>
-            <input type="number" name="variations[${variationCount}][stock]" required class="input input-bordered w-full bg-white dark:bg-darker">
-        </div>
-        <div class="flex-1">
-            <label for="variations[${variationCount}][image]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Gambar</label>
-            <input type="file" name="variations[${variationCount}][image]" accept="image/*" class="file-input">
-            <div id="variation-preview-${variationCount}" class="mt-2"></div>
-        </div>
-        <button type="button" class="remove-variation text-red-500 mt-2">Hapus Variasi</button>
-        `;
+                    <input type="hidden" name="variations[${variationCount}][id]" value="">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800 dark:text-gray-300">Bahan</label>
+                        <select name="variations[${variationCount}][material_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
+                            <option value="">{{ __('Pilih Bahan') }}</option>
+                            ${materials.map(material => `<option value="${material.id}">${material.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800 dark:text-gray-300">Ukuran</label>
+                        <select name="variations[${variationCount}][size_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
+                            <option value="">{{ __('Pilih Ukuran') }}</option>
+                            ${sizes.map(size => `<option value="${size.id}">${size.size_number} - ${size.size_chart}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800 dark:text-gray-300">Warna</label>
+                        <select name="variations[${variationCount}][color_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
+                            <option value="">{{ __('Pilih Warna') }}</option>
+                            ${colors.map(color => `<option value="${color.id}">${color.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800 dark:text-gray-300">Harga</label>
+                        <input type="number" name="variations[${variationCount}][price]" required class="input input-bordered w-full bg-white dark:bg-darker">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800 dark:text-gray-300">Stok</label>
+                        <input type="number" name="variations[${variationCount}][stock]" required class="input input-bordered w-full bg-white dark:bg-darker">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-800 dark:text-gray-300">Gambar</label>
+                        <input type="file" name="variations[${variationCount}][image]" accept="image/*" class="file-input file-input-xs">
+                        <div id="variation-preview-${variationCount}" class="mt-2"></div>
+                    </div>
+                    <button type="button" class="remove-variation text-red-500 mt-2">Hapus Variasi</button>
+                `;
 
                 container.appendChild(newVariation);
 
-                // Tambahkan event listener untuk preview gambar
                 const fileInput = newVariation.querySelector(".file-input");
                 fileInput.addEventListener("change", (event) => {
                     const previewContainer = document.getElementById(
                         `variation-preview-${variationCount}`);
                     previewContainer.innerHTML = ""; // Hapus preview sebelumnya
-
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const img = document.createElement("img");
-                            img.src = e.target.result;
-                            img.alt = "Preview Image";
-                            img.classList.add("w-full", "h-32", "object-cover", "rounded-md");
-                            previewContainer.appendChild(img);
-                        };
-                        reader.readAsDataURL(file);
+                    const files = event.target.files;
+                    if (files.length > 0) {
+                        Array.from(files).forEach(file => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const img = document.createElement("img");
+                                img.src = e.target.result;
+                                img.alt = "Preview Image";
+                                img.classList.add("w-full", "h-32", "object-cover",
+                                    "rounded-md");
+                                previewContainer.appendChild(img);
+                            };
+                            reader.readAsDataURL(file);
+                        });
                     }
                 });
 
-                // Event listener untuk tombol hapus
                 newVariation.querySelector(".remove-variation").addEventListener("click", () => {
                     newVariation.remove();
                 });
 
                 variationCount++;
             });
+
 
             // Validasi untuk gambar cover
             document.getElementById('cover').addEventListener('change', (e) => {
@@ -538,6 +552,7 @@
                 }
             };
         });
+
         function deleteVariantProduct(variantId) {
             console.log("ID yang diterima:", variantId);
 
@@ -570,7 +585,64 @@
                         error: function(xhr, status, error) {
                             Swal.fire({
                                 title: 'Gagal!',
-                                text: xhr.responseJSON.message || 'Terjadi kesalahan, coba lagi nanti.',
+                                text: xhr.responseJSON.message ||
+                                    'Terjadi kesalahan, coba lagi nanti.',
+                                icon: 'error',
+                                confirmButtonColor: '#d33',
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function removeImage(imageId, variationIndex) {
+            // Menghapus gambar dari tampilan
+            const imageElement = document.querySelector(`#variation-preview-${variationIndex} img[src*="${imageId}"]`);
+            if (imageElement) {
+                imageElement.parentElement.remove(); // Menghapus elemen gambar
+            }
+
+            // Menandai gambar sebagai dihapus
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = `variations[${variationIndex}][deleted_images][]`; // Menandai gambar yang dihapus
+            hiddenInput.value = imageId; // ID gambar yang dihapus
+            document.querySelector(`#variations-container`).appendChild(hiddenInput);
+        }
+
+        function deleteProductImage(imageId) {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Gambar ini akan dihapus.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/admin/master/products/images/${imageId}`,
+                        type: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Sukses!',
+                                text: response.message,
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: xhr.responseJSON.message ||
+                                    'Terjadi kesalahan, coba lagi nanti.',
                                 icon: 'error',
                                 confirmButtonColor: '#d33',
                             });

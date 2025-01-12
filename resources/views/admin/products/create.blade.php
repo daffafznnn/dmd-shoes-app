@@ -252,42 +252,42 @@
                     "bg-gray-50", "dark:bg-darker", "shadow-sm");
 
                 newVariation.innerHTML = `
-                    <div class="flex-1">
-                        <label for="variations[${variationCount}][material]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Bahan</label>
-                        <select name="variations[${variationCount}][material_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
-                            <option value="">{{ __('Pilih Bahan') }}</option>
-                            ${materials.map(material => `<option value="${material.id}">${material.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label for="variations[${variationCount}][size]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Ukuran</label>
-                        <select name="variations[${variationCount}][size_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
-                            <option value="">{{ __('Pilih Ukuran') }}</option>
-                            ${sizes.map(size => `<option value="${size.id}">${size.size_number} - ${size.size_chart}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label for="variations[${variationCount}][color]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Warna</label>
-                        <select name="variations[${variationCount}][color_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
-                            <option value="">{{ __('Pilih Warna') }}</option>
-                            ${colors.map(color => `<option value="${color.id}">${color.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="flex-1">
-                        <label for="variations[${variationCount}][price]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Harga</label>
-                        <input type="number" name="variations[${variationCount}][price]" required class="input input-bordered w-full bg-white dark:bg-darker">
-                    </div>
-                    <div class="flex-1">
-                        <label for="variations[${variationCount}][stock]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Stok</label>
-                        <input type="number" name="variations[${variationCount}][stock]" required class="input input-bordered w-full bg-white dark:bg-darker">
-                    </div>
-                <div class="flex-1">
-                        <label for="variations[${variationCount}][image]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Gambar</label>
-                        <input type="file" name="variations[${variationCount}][images][]" accept="image/*" class="file-input" multiple>
-                        <div class="preview-container" id="variation-preview-${variationCount}" class="mt-2"></div>
-                    </div>
-                    <button type="button" class="remove-variation text-red-500 mt-2">Hapus Variasi</button>
-                `;
+        <div class="flex-1">
+            <label for="variations[${variationCount}][material_id]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Bahan</label>
+            <select name="variations[${variationCount}][material_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
+                <option value="">{{ __('Pilih Bahan') }}</option>
+                ${materials.map(material => `<option value="${material.id}">${material.name}</option>`).join('')}
+            </select>
+        </div>
+        <div class="flex-1">
+            <label for="variations[${variationCount}][size_id]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Ukuran</label>
+            <select name="variations[${variationCount}][size_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
+                <option value="">{{ __('Pilih Ukuran') }}</option>
+                ${sizes.map(size => `<option value="${size.id}">${size.size_number} - ${size.size_chart}</option>`).join('')}
+            </select>
+        </div>
+        <div class="flex-1">
+            <label for="variations[${variationCount}][color_id]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Warna</label>
+            <select name="variations[${variationCount}][color_id]" required class="select select-bordered w-full bg-white dark:bg-darker">
+                <option value="">{{ __('Pilih Warna') }}</option>
+                ${colors.map(color => `<option value="${color.id}">${color.name}</option>`).join('')}
+            </select>
+        </div>
+        <div class="flex-1">
+            <label for="variations[${variationCount}][price]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Harga</label>
+            <input type="number" name="variations[${variationCount}][price]" required class="input input-bordered w-full bg-white dark:bg-darker">
+        </div>
+        <div class="flex-1">
+            <label for="variations[${variationCount}][stock]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Stok</label>
+            <input type="number" name="variations[${variationCount}][stock]" required class="input input-bordered w-full bg-white dark:bg-darker">
+        </div>
+        <div class="flex-1">
+            <label for="variations[${variationCount}][images]" class="block text-sm font-medium text-gray-800 dark:text-gray-300">Gambar</label>
+            <input type="file" name="variations[${variationCount}][images][]" accept="image/*" class="file-input file-input-xs" multiple>
+            <div class="preview-container" id="variation-preview-${variationCount}" class="mt-2"></div>
+        </div>
+        <button type="button" class="remove-variation text-red-500 mt-2">Hapus Variasi</button>
+    `;
 
                 // Tambahkan variasi ke kontainer
                 container.appendChild(newVariation);
