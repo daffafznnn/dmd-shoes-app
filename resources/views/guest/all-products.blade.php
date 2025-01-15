@@ -6,12 +6,14 @@
     </section>
     <!-- End: Filter -->
     <!-- Start: Featured Products -->
-    <section class="container mx-auto px-4 py-8 bg-white shadow-md">
+    <section class="container mx-auto px-4 py-8 bg-white shadow-md mb-8">
         <div class="w-full flex justify-between items-center px-4 border-b">
             <h2 class="text-3xl font-semibold mb-4">{{ __('All Products') }}</h2>
-            <div class="flex items-center mb-4">
-                <input type="checkbox" name="is_featured" id="is_featured" class="mr-2">
-                <label for="is_featured" class="tracking-wide font-semibold">{{ __('Featured Products') }}</label>
+            <div class="form-control">
+                <label class="label cursor-pointer gap-2">
+                    <span class="label-text text-black dark:text-white">{{ __('Featured Products') }}</span>
+                    <input type="checkbox" name="is_featured" id="is_featured" class="checkbox checkbox-black dark:checkbox-white" />
+                </label>
             </div>
         </div>
         @if (request()->has('search'))
@@ -50,7 +52,7 @@
                                         class="fa-solid fa-circle-chevron-left"></i></span>
                             @else
                                 <a id="paginationLink" href="{{ $all_products->previousPageUrl() }}"
-                                    class="text-green-500 hover:text-green-700"><i
+                                    class="text-black hover:text-gray-700"><i
                                         class="fa-solid fa-circle-chevron-left"></i></a>
                             @endif
 
@@ -62,17 +64,17 @@
 
                             @for ($i = $startPage; $i <= $endPage; $i++)
                                 @if ($i == $all_products->currentPage())
-                                    <span class="bg-green-500 text-white px-3 py-1">{{ $i }}</span>
+                                    <span class="bg-black text-white px-3 py-1">{{ $i }}</span>
                                 @else
                                     <a id="paginationLink" href="{{ $all_products->url($i) }}"
-                                        class="text-green-500 hover:text-white hover:bg-green-500 px-3 py-1 rounded-md">{{ $i }}</a>
+                                        class="text-black hover:text-white hover:bg-black px-3 py-1 rounded-md">{{ $i }}</a>
                                 @endif
                             @endfor
 
                             {{-- Next Page Link --}}
                             @if ($all_products->hasMorePages())
                                 <a id="paginationLink" href="{{ $all_products->nextPageUrl() }}"
-                                    class="text-green-500 hover:text-green-700"><i
+                                    class="text-black hover:text-gray-700"><i
                                         class="fa-solid fa-circle-chevron-right"></i></a>
                             @else
                                 <span class="text-gray-500 cursor-not-allowed"><i
@@ -137,3 +139,4 @@
         </script>
     @endpush
 </x-guest-layout>
+

@@ -6,21 +6,22 @@
             <!-- Product Image -->
             <div class="relative">
                 <img id="main-image" src="{{ asset('storage/' . $product->cover) }}" alt="{{ $product->name }}"
-                    class="w-full h-96 object-contain rounded-lg shadow-lg p-4 border border-green-500">
+                    class="w-full h-96 object-contain rounded-lg shadow-lg p-4 border border-black">
 
                 <!-- Thumbnail Images -->
-                <div id="thumbnails" class="flex mt-4 space-x-2">
-                    <img src="{{ asset('storage/' . $product->cover) }}" alt="Cover Image"
-                        class="w-20 h-20 object-cover rounded-md border cursor-pointer"
-                        onmouseover="updateImage('{{ asset('storage/' . $product->cover) }}')"
-                        onclick="updateImage('{{ asset('storage/' . $product->cover) }}')">
-                    @foreach ($product->product_images as $image)
-                        <img src="{{ asset('storage/' . $image->image_path) }}" alt="Product Image"
-                            class="w-20 h-20 object-cover rounded-md border cursor-pointer"
-                            onmouseover="updateImage('{{ asset('storage/' . $image->image_path) }}')"
-                            onclick="updateImage('{{ asset('storage/' . $image->image_path) }}')">
-                    @endforeach
-                </div>
+                <div id="thumbnails" class="flex flex-wrap mt-4 space-x-2">
+                <img src="{{ asset('storage/' . $product->cover) }}" alt="Cover Image"
+                    class="w-20 h-20 object-cover rounded-md border cursor-pointer"
+                    onmouseover="updateImage('{{ asset('storage/' . $product->cover) }}')"
+                    onclick="updateImage('{{ asset('storage/' . $product->cover) }}')">
+                @foreach ($product->product_images as $image)
+                    <img src="{{ asset('storage/' . $image->image_path) }}" alt="Product Image"
+                        class="w-20 h-20 object-cover rounded-md border cursor-pointer flex-shrink-0 mb-2"
+                        onmouseover="updateImage('{{ asset('storage/' . $image->image_path) }}')"
+                        onclick="updateImage('{{ asset('storage/' . $image->image_path) }}')">
+                @endforeach
+            </div>
+
             </div>
 
             <!-- Product Info -->
@@ -28,7 +29,7 @@
                 <h1 class="text-3xl font-semibold text-gray-900">{{ $product->name }}
                     @if ($product->is_featured)
                         <span
-                            class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800 ml-2">{{ __('Featured') }}</span>
+                            class="inline-block px-3 py-1 text-sm font-medium rounded-full bg-black text-gray-100 ml-2">{{ __('Featured') }}</span>
                     @endif
                 </h1>
                 <p id="price" class="text-xl font-bold text-gray-900 mt-4">Rp
@@ -39,7 +40,7 @@
                 <div class="mt-4">
                     <div id="material-section">
                         <span class="font-semibold">{{ __('Material') }}:</span>
-                        <div class="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2">
+                        <div class="grid grid-cols-3 md:grid-cols-4 gap-2 mt-2 checked:text-gray-100 ">
                             @foreach ($product->product_variants->pluck('material_id')->unique() as $materialId)
                                 @php
                                     $material = $materials->firstWhere('id', $materialId);
@@ -49,11 +50,14 @@
                                         return $variant->material_id == $material->id &&
                                             $variant->product_stocks->sum('stock') > 0;
                                     });
+                                    $hasUnavailableVariants = $product->product_variants->where('material_id', $material->id)->contains(function ($variant) {
+                                        return $variant->product_stocks->sum('stock') <= 0;
+                                    });
                                 @endphp
                                 <button
-                                    class="material-option border px-4 py-2 rounded {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                    class="material-option border px-4 py-2 rounded {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }} {{ $hasUnavailableVariants ? 'opacity-50 cursor-not-allowed' : '' }}"
                                     data-id="{{ $material->id }}" data-name="{{ $material->name }}"
-                                    {{ !$isAvailable ? 'disabled' : '' }}>
+                                    {{ (!$isAvailable || $hasUnavailableVariants) ? 'disabled' : '' }}>
                                     {{ $material->name }}
                                 </button>
                             @endforeach
@@ -72,10 +76,13 @@
                                         return $variant->color_id == $color->id &&
                                             $variant->product_stocks->sum('stock') > 0;
                                     });
+                                    $hasUnavailableVariants = $product->product_variants->where('color_id', $color->id)->contains(function ($variant) {
+                                        return $variant->product_stocks->sum('stock') <= 0;
+                                    });
                                 @endphp
                                 <button
-                                    class="color-option border px-4 py-2 rounded {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                    data-id="{{ $color->id }}" {{ !$isAvailable ? 'disabled' : '' }}>
+                                    class="color-option border px-4 py-2 rounded {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }} {{ $hasUnavailableVariants ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                    data-id="{{ $color->id }}" {{ (!$isAvailable || $hasUnavailableVariants) ? 'disabled' : '' }}>
                                     {{ $color->name }}
                                 </button>
                             @endforeach
@@ -94,10 +101,13 @@
                                         return $variant->size_id == $size->id &&
                                             $variant->product_stocks->sum('stock') > 0;
                                     });
+                                    $hasUnavailableVariants = $product->product_variants->where('size_id', $size->id)->contains(function ($variant) {
+                                        return $variant->product_stocks->sum('stock') <= 0;
+                                    });
                                 @endphp
                                 <button
-                                    class="size-option border px-4 py-2 rounded {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }}"
-                                    data-id="{{ $size->id }}" {{ !$isAvailable ? 'disabled' : '' }}>
+                                    class="size-option border px-4 py-2 rounded {{ !$isAvailable ? 'opacity-50 cursor-not-allowed' : '' }} {{ $hasUnavailableVariants ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                    data-id="{{ $size->id }}" {{ (!$isAvailable || $hasUnavailableVariants) ? 'disabled' : '' }}>
                                     {{ $size->size_number }}
                                 </button>
                             @endforeach
@@ -108,8 +118,8 @@
                 <!-- WhatsApp Button -->
                 <div class="mt-6">
                     <a id="whatsapp-button" href="#" target="_blank"
-                        class="px-4 py-3 bg-green-500 text-white font-medium rounded-lg shadow-md hover:bg-green-600 transition duration-200 disabled:opacity-50 disabled:pointer-events-none">
-                        {{ __('Chat on WhatsApp') }}
+                        class="px-4 py-3 bg-black text-white font-medium rounded-lg shadow-md hover:bg-black transition duration-200 disabled:opacity-50 disabled:pointer-events-none">
+                         <i class="bi bi-whatsapp"></i> {{ __('Chat on WhatsApp') }}
                     </a>
                 </div>
             </div>
@@ -120,7 +130,7 @@
     <div class="px-5 mt-8">
         <div class="bg-white py-4 p-5 mb-8 pb-8">
             <h2 class="text-2xl font-semibold text-gray-900">{{ __('Product specifications') }}</h2>
-            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Stock') }}:</span>
+            <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Isi dalam Per Pax') }}:</span>
                 {{ $product->default_stock ?? 0 }}</p>
             <p class="text-gray-600 mt-2"><span class="font-semibold">{{ __('Category') }}:</span>
                 {{ $product->categories->name ?? '-' }}</p>
@@ -133,6 +143,7 @@
         </div>
     </div>
     <!-- End: Product Specifications -->
+
 
     <!-- Related Products -->
     @if (isset($relatedProducts) && count($relatedProducts) > 0)
@@ -147,7 +158,7 @@
         </div>
         <div class="text-center my-4 md:my-7">
             <a href="{{ Route('product.all', ['category' => $relatedProducts[0]->categories->id]) }}"
-                class="bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-md">{{ __('See More Related Products') }}<i
+                class="bg-black hover:bg-black text-white px-5 py-3 rounded-md">{{ __('See More Related Products') }}<i
                     class="fa-solid fa-circle-chevron-right ml-3"></i></a>
         </div>
     @endif
@@ -168,28 +179,23 @@
         let selectedSize = null;
         let selectedVariant = null;
 
-        // Rentang harga
         const priceRange = {
             min: {{ $priceRange['min'] }},
             max: {{ $priceRange['max'] }}
         };
 
-        // Update Rentang Harga
         function updatePriceRange() {
             const priceElement = document.getElementById('price');
             priceElement.textContent =
                 `Rp ${new Intl.NumberFormat('id-ID').format(priceRange.min)} - Rp ${new Intl.NumberFormat('id-ID').format(priceRange.max)}`;
         }
 
-        // Update Main Image
         function updateImage(src) {
             document.getElementById('main-image').src = src;
         }
 
-        // Update Price and Image Based on Selected Variations
         function updateDetails() {
             if (selectedMaterial && selectedColor) {
-                // Temukan variasi yang sesuai dengan material dan warna yang dipilih
                 const variant = variants.find(v =>
                     v.material_id == selectedMaterial &&
                     v.color_id == selectedColor
@@ -197,40 +203,29 @@
 
                 if (variant) {
                     selectedVariant = variant;
+                    document.getElementById('price').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(variant.price)}`;
 
-                    // Update Price
-                    const priceElement = document.getElementById('price');
-                    priceElement.textContent = `Rp ${new Intl.NumberFormat('id-ID').format(variant.price)}`;
-
-                    // Update Image (menggunakan gambar variasi produk pertama)
                     const imageUrl = variant.product_variant_images && variant.product_variant_images.length > 0 ?
                         `{{ asset('storage/') }}/${variant.product_variant_images[0].image}` :
                         '{{ asset('storage/' . $product->cover) }}';
                     updateImage(imageUrl);
 
-                    // Panggil updateWhatsAppLink untuk mengupdate link WhatsApp
                     updateWhatsAppLink();
                 }
             }
         }
 
-
-        // Update WhatsApp Link
         function updateWhatsAppLink() {
             const whatsappButton = document.getElementById('whatsapp-button');
-            const phoneNumber = whatsappNumber; // Ganti dengan nomor telepon yang diinginkan
+            const phoneNumber = whatsappNumber;
 
             if (selectedVariant) {
-                const materialName = selectedVariant.product_materials ? selectedVariant.product_materials.name :
-                    'Unknown Material';
+                const materialName = selectedVariant.product_materials ? selectedVariant.product_materials.name : 'Unknown Material';
                 const colorName = selectedVariant.product_colors ? selectedVariant.product_colors.name : 'Unknown Color';
-                const sizeNumber = selectedVariant.product_sizes ? selectedVariant.product_sizes.size_number :
-                    'Unknown Size';
+                const sizeNumber = selectedVariant.product_sizes ? selectedVariant.product_sizes.size_number : 'Unknown Size';
 
-                const message =
-                    `Halo, saya tertarik dengan produk ${productName}\nBahan: ${materialName}\nWarna: ${colorName}\nUkuran: ${sizeNumber}\nKategori: ${productCategory}\nTipe: ${productType}`;
+                const message = `Halo, saya tertarik dengan produk ${productName}\nBahan: ${materialName}\nWarna: ${colorName}\nUkuran: ${sizeNumber}\nKategori: ${productCategory}\nTipe: ${productType}`;
 
-                // Membuat link WhatsApp dengan nomor telepon dan pesan
                 whatsappButton.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
                 whatsappButton.disabled = false;
             } else {
@@ -239,18 +234,14 @@
             }
         }
 
-
-
-        // Event Listeners untuk Variasi
         document.querySelectorAll('.material-option').forEach(button => {
             button.addEventListener('click', () => {
                 selectedMaterial = button.dataset.id;
-                document.querySelectorAll('.material-option').forEach(btn => btn.classList.remove(
-                    'bg-green-500'));
-                button.classList.add('bg-green-500');
-                selectedColor = null; // Reset pilihan warna
-                selectedSize = null; // Reset pilihan ukuran
-                updateDetails(); // Perbarui detail
+                document.querySelectorAll('.material-option').forEach(btn => btn.classList.remove('bg-black', 'text-white'));
+                button.classList.add('bg-black', 'text-white');
+                selectedColor = null;
+                selectedSize = null;
+                updateDetails();
             });
         });
 
@@ -258,11 +249,10 @@
             button.addEventListener('click', () => {
                 if (!button.disabled) {
                     selectedColor = button.dataset.id;
-                    document.querySelectorAll('.color-option').forEach(btn => btn.classList.remove(
-                        'bg-green-500'));
-                    button.classList.add('bg-green-500');
-                    selectedSize = null; // Reset ukuran setelah memilih warna
-                    updateDetails(); // Perbarui detail ketika warna dipilih
+                    document.querySelectorAll('.color-option').forEach(btn => btn.classList.remove('bg-black', 'text-white'));
+                    button.classList.add('bg-black', 'text-white');
+                    selectedSize = null;
+                    updateDetails();
                 }
             });
         });
@@ -271,15 +261,13 @@
             button.addEventListener('click', () => {
                 if (!button.disabled) {
                     selectedSize = button.dataset.id;
-                    document.querySelectorAll('.size-option').forEach(btn => btn.classList.remove(
-                        'bg-green-500'));
-                    button.classList.add('bg-green-500');
-                    updateDetails(); // Perbarui detail ketika ukuran dipilih
+                    document.querySelectorAll('.size-option').forEach(btn => btn.classList.remove('bg-black', 'text-white'));
+                    button.classList.add('bg-black', 'text-white');
+                    updateDetails();
                 }
             });
         });
 
-        // Initial price range display
         updatePriceRange();
     </script>
 </x-guest-layout>

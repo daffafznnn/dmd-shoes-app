@@ -70,7 +70,7 @@
                             </div>
                             <div>
                                 <label for="default_stock"
-                                    class="block text-sm font-medium text-gray-800 dark:text-gray-300">{{ __('Stok Awal') }}</label>
+                                    class="block text-sm font-medium text-gray-800 dark:text-gray-300">{{ __('Isi dalam Per Pax') }}</label>
                                 <input type="number" name="default_stock" id="default_stock" required
                                     class="input input-bordered w-full bg-white dark:bg-darker"
                                     placeholder="{{ __('Masukkan stok default') }}"

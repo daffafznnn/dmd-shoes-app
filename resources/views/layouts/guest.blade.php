@@ -22,7 +22,7 @@
     <meta property="og:description"
         content="{{ !empty(trim($__env->yieldContent('description'))) ? $__env->yieldContent('description') : '-' }}" />
     <meta property="og:image"
-        content="{{ !empty(trim($__env->yieldContent('image'))) ? $__env->yieldContent('image') : asset('assets/images/logo.png') }}" />
+        content="{{ !empty(trim($__env->yieldContent('image'))) ? $__env->yieldContent('image') : asset('assets/images/dmd-logo.png.png') }}" />
 
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://domain.com/" />
@@ -30,7 +30,8 @@
     <meta property="twitter:description"
         content="{{ !empty(trim($__env->yieldContent('description'))) ? $__env->yieldContent('description') : '-' }}" />
     <meta property="twitter:image"
-        content="{{ !empty(trim($__env->yieldContent('image'))) ? $__env->yieldContent('image') : asset('assets/images/logo.png') }}" />
+        content="{{ !empty(trim($__env->yieldContent('image'))) ? $__env->yieldContent('image') : asset('assets/images/dmd-logo.png.png') }}" />
+    <link rel="shortcut icon" href="{{ asset('storage/' . $setting->favicon ?? '') }}" type="image/x-icon">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -51,11 +52,7 @@
 <body class="font-sans text-gray-900 bg-gray-100 antialiased">
     <!-- Header -->
     <x-guest.header />
-
-    @if (Route::currentRouteName() === 'guest.index' || Route::currentRouteName() === 'product.all')
-        <!-- New Navigation Below Header -->
-        <x-guest.navbar />
-    @endif
+    <x-guest.navbar />
 
     <!-- Page Content -->
     <main>

@@ -43,13 +43,13 @@
                     <!-- Kolom Kanan -->
                     <div class="space-y-2">
                         <div>
-                            <span class="text-gray-600 dark:text-gray-300 font-medium">{{ __('Harga Default:') }}</span>
+                            <span class="text-gray-600 dark:text-gray-300 font-medium">{{ __('Harga Awal:') }}</span>
                             <p class="text-lg text-gray-800 dark:text-white font-semibold">
                                 Rp {{ number_format($product->default_price, 0, ',', '.') }}
                             </p>
                         </div>
                         <div>
-                            <span class="text-gray-600 dark:text-gray-300 font-medium">{{ __('Stok Default:') }}</span>
+                            <span class="text-gray-600 dark:text-gray-300 font-medium">{{ __('Isi dalam Per Pax') }}</span>
                             <p class="text-lg text-gray-800 dark:text-white">{{ $product->default_stock }}</p>
                         </div>
                         <div>

@@ -21,7 +21,7 @@
                 <a href="https://wa.me/{{ substr($setting->phone, 1) }}?text=Hai, {{ $setting->name }}!"
                     class="absolute left-0 ml-10 flex-col items-center hidden justify-center md:w-full pb-8 mt-48 border-b border-gray-200 md:relative md:w-auto md:bg-transparent md:border-none md:mt-0 md:flex-row md:p-0 md:items-end md:flex md:justify-between">
                     <div
-                        class="flex items-center z-40 mr-0 py-2 px-3 bg-green-500 hover:bg-green-600 rounded-md text-sm font-bold text-white sm:mr-3 md:mt-0">
+                        class="flex items-center z-40 mr-0 py-2 px-3 bg-black hover:bg-gray-800 rounded-md text-sm font-bold text-white sm:mr-3 md:mt-0">
                         <i class="fa-brands fa-whatsapp text-2xl mr-2"></i>{{ __('Chat online now') }}!
                     </div>
                 </a>
@@ -40,7 +40,7 @@
                 </label>
 
                 <div
-                    class="flex flex-col block w-full font-medium border-t border-gray-200 text-green-500 hover:text-white hover:bg-green-500 md:hidden">
+                    class="flex flex-col block w-full font-medium border-t border-gray-200 text-black hover:text-white hover:bg-gray-800 md:hidden">
                     <a href="https://wa.me/{{ substr($setting->phone, 1) }}?text=Hai, {{ $setting->name }}!"
                         class="w-full py-2 font-bold text-center"><i
                             class="fa-brands fa-whatsapp mr-2"></i>{{ __('Chat online now') }}!</a>
@@ -78,3 +78,4 @@
             });
         </script>
     @endpush
+
